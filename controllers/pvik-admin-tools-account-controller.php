@@ -1,4 +1,5 @@
 <?php
+Core::Depends(Core::$Config['PvikAdminTools']['BasePath'] . 'controllers/pvik-admin-tools-base-controller.php');
 /**
  * Logic for login and logout.
  */

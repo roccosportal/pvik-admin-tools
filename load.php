@@ -1,7 +1,7 @@
 <?php
 self::$Config['PvikAdminTools'] = array ();
 // gets and sets the base path of PvikAdminTools
-self::$Config['PvikAdminTools']['BasePath'] = '~/' . str_replace('load.php', '', str_replace(getcwd(), '',  realpath ( __FILE__ ))) . '/';
+self::$Config['PvikAdminTools']['BasePath'] = '~' . str_replace('load.php', '', str_replace(getcwd(), '',  realpath ( __FILE__ )));
 //include pvik-admin-tools config
 require(Core::RealPath(self::$Config['PvikAdminTools']['BasePath'] .'configs/config.php'));
 
