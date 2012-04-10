@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+	    <title>PvikAdminTools HowTo</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css" ></link>
+	<link rel="stylesheet" type="text/css" href="css/sh-core.css" ></link>
+	<link rel="stylesheet" type="text/css" href="css/sh-theme-default.css" ></link>
+	<link rel="stylesheet" type="text/css" href="css/general.css" ></link> 
+	<script type="text/javascript" src="js/sh-core.js"></script>
+	<script type="text/javascript" src="js/sh-brush-php.js"></script>
+	<script type="text/javascript" src="js/sh-brush-xml.js"></script>
+	<script type="text/javascript">
+	     SyntaxHighlighter.all()
+	</script>
+</head>
+<body>
+<div id="global">
+<div id="header">
+<h1>PvikAdminTools HowTo</h1>
+</div>
+<div id="main">
+<div id="menu">
+<h2>Overview</h2>
+<ul>
+    <li><a href="#general">General</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#basic-configuration">Basic configuration</a>
+        <ul>
+            <li><a href="#basic-configuration-1">Set up Pvik</a></li>
+            <li><a href="#basic-configuration-2">Set up login</a></li>
+        </ul>
+    </li>
+    <li><a href="#table-configuration">Table configuration</a></li>
+    <li><a href="#field-types">Field types</a>
+         <ul>
+            <li><a href="#field-types-1">Normal</a></li>
+            <li><a href="#field-types-2">Checkbox</a></li>
+            <li><a href="#field-types-3">Date</a></li>
+            <li><a href="#field-types-4">File</a></li>
+            <li><a href="#field-types-5">FileSize</a></li>
+            <li><a href="#field-types-6">Select</a></li>
+            <li><a href="#field-types-7">Textarea</a></li>
+            <li><a href="#field-types-8">UniqueName</a></li>
+            <li><a href="#field-types-9">UpdateDate</a></li>
+            <li><a href="#field-types-10">Wysiwyg</a></li>
+        </ul>
+    </li>
+    <li><a href="#foreign-tables">ForeignTables</a></li>
+    <li><a href="#url">Url to PvikAdminTools</a></li>
+    <li><a href="#file-folders">File folders</a></li>
+    <li><a href="#example-config">Example config</a></li>
+    <li><a href="#customized-field-type">Add customised field type</a></li>
+</ul>
+</div>
+<div id="content">
+<h2 id="general">General</h2>
+<p>
+    PvikAdminTools is a simple tool for the framework Pvik that helps administrators to create/edit/delete entries on the database and upload files.
+    If you don't bother with a simple layout and not having much functions it helps you to set up a backend for your website very quick.
+    This documentation is for the Version 1.0.0beta.
+</p>
+<h2 id="requirements">Requirements</h2>
+<p>You need a Pvik version higher or equals 2.1.0.</p>
+<h2 id="install">Install</h2>
+<p>To install PvikAdminTools you just need to copy the files to your pvik webserver folder in a sub directory like /pvik-admin-tools/.</p>
+<h2 id="basic-configuration">Basic configuration</h2>
+<h3 id="basic-configuration-1">Set up Pvik</h3>
+<p>Add following line to the Pvik config file at the end. Make sure the path is right.</p>
+<pre class="brush: php">
+require(Core::RealPath(&#39;~/pvik-admin-tools/load.php&#39;));
+</pre>
+<h3 id="basic-configuration-2">Set up login</h3>
+<p>
+    Change following values in the /pvik-admin-tools/configs/config.php. Make sure the password is a md5 hash.
+    By default the username is 'Admin' and the password is 'test'. Change it or otherwise other people can access your backend.
+</p>
+<pre class="brush: php">
+self::$Config[&#39;PvikAdminTools&#39;][&#39;Login&#39;][&#39;Username&#39;] = &#39;Admin&#39;;
+self::$Config[&#39;PvikAdminTools&#39;][&#39;Login&#39;][&#39;PasswordMD5&#39;] = &#39;098f6bcd4621d373cade4e832627b4f6&#39;;
+</pre>
+<h2 id="table-configuration">Table configuration</h2>
+<p>
+PvikAdminTools only displays tables and fields you set up in the configuration file.
+The basic layout from the tables array looks like that:
+</p>
+<pre class="brush: php">
+self::$Config[&#39;PvikAdminTools&#39;][&#39;Tables&#39;] = array ( 
+    &#39;Authors&#39; =&gt; array ( 
+            &#39;Fields&#39; =&gt; array ( 
+                &#39;Firstname&#39; =&gt; array (&#39;Type&#39; =&gt; &#39;Normal&#39;, &#39;ShowInOverview&#39; =&gt; true),
+                &#39;Lastname&#39; =&gt; array (&#39;Type&#39; =&gt; &#39;Normal&#39;, &#39;ShowInOverview&#39; =&gt; true)
+                               )
+                        ),
+    &#39;Books&#39; =&gt; array (
+            &#39;Fields&#39; =&gt; array ( 
+                &#39;Title&#39; =&gt; array (&#39;Type&#39; =&gt; &#39;Normal&#39;, &#39;ShowInOverview&#39; =&gt; true),
+                &#39;Author&#39; =&gt; array (&#39;Type&#39; =&gt; &#39;Select&#39;, &#39;UseField&#39; =&gt; &#39;Lastname&#39;, &#39;ShowInOverview&#39; =&gt; true)
+                               )
+                        )       
+);
+</pre>
+<p>
+    This simple code set up the tables authors and books for letting you create/edit/delete entries.
+    Look for the type definition to understand which types you can use. The ModelTable and Model class must be set up correctly otherwise
+    PvikAdminTools produces an error.
+</p>
+<h2 id="field-types">Field types</h2>
+<p>You must set 'ShowInOverview' to true to show a field in the overview list. If you set 'Nullable' to true you allow a field to be empty.</p>
+<h3 id="field-types-1">Normal</h3>
+<p>Shows a text box.</p>
+<h3 id="field-types-2">Checkbox</h3>
+<p>Shows a check box</p>
+<h3 id="field-types-3">Date</h3>
+<p>Shows a text box and validates if the input is an English date.</p>
+<h3 id="field-types-4">File</h3>
+<p>Shows a text box and validates if the input is a file path.</p>
+<h3 id="field-types-5">FileSize</h3>
+<p>Shows a disabled text box with the file size of a file field. Set up 'UseField' to the file field.</p>
+<h3 id="field-types-6">Select</h3>
+<p>Shows a select box. Only working with a foreign object field. Set up the 'UseField' to decide which value is shown in the select box for the foreign object.</p>
+<h3 id="field-types-7">Textarea</h3>
+<p>Shows a text area.</p>
+<h3 id="field-types-8">UniqueName</h3>
+<p>Shows a disabled text box with a unique name. Set up the 'UseField' to decide which field should be used for creating an unique name.</p>
+<h3 id="field-types-9">UpdateDate</h3>
+<p>Shows a disabled text box with the update date of the entry.</p>
+<h3 id="field-types-10">Wysiwyg</h3>
+<p>Shows a WYSIWYG editor. Uses TinyMCE.</p>
+<h2 id="foreign-tables">ForeignTables</h2>
+<p>You can set up foreign tables for a table in the configuration. 
+    That shows a list of entries that belong to the current table entry from a foreign table when you are in edit mode.
+</p>
+<pre class="brush: php">
+self::$Config[&#39;PvikAdminTools&#39;][&#39;Tables&#39;] = array (
+    &#39;Author&#39; =&gt; 
+        array ( &#39;Fields&#39; =&gt; array (
+                        &#39;Firstname&#39; =&gt; array(&#39;Type&#39; =&gt; &#39;Normal&#39;, &#39;ShowInOverview&#39; =&gt; true),
+                        &#39;Lastname&#39; =&gt; array (&#39;Type&#39; =&gt; &#39;Normal&#39;, &#39;ShowInOverview&#39; =&gt; true)
+                ),
+                &#39;ForeignTables&#39; =&gt; array(&#39;Books&#39; =&gt; array (&#39;ForeignKey&#39; =&gt; &#39;AuthorID&#39;))
+            )
+    );
+</pre>
+<h2 id="url">Url to PvikAdminTools</h2>
+<p>The standard url route for PvikAdminTools is /admin/.</p>
+<pre class="brush: php">
+self::$Config[&#39;PvikAdminTools&#39;][&#39;Url&#39;] = &#39;/admin/&#39;;
+</pre>
+<h2 id="file-folders">File folders</h2>
+<p>
+You can set up to which folders the upload tool can upload files to.
+</p>
+<pre class="brush: php">
+self::$Config[&#39;PvikAdminTools&#39;][&#39;FileFolders&#39;]= array (&#39;~/files/&#39;, &#39;~/images/&#39;);
+</pre>
+<h2 id="example-config">Example config</h2>
+<p>You find an example config file <a href="example-config.txt">here</a>.</p>
+<h2 id="customized-field-type">Add customised field type</h2>
+<p>You can add a customised field type. Inherit your class from PvikAdminToolsBaseField. PvikAdminTools calls automatically your class. If you want to create the field type Number see following code:</p>
+<pre class="brush: php">
+Core::Depends(Core::$Config[&#39;PvikAdminTools&#39;][&#39;BasePath&#39;] . &#39;code/fields/pvik-admin-tools-base-field.php&#39;);
+class PvikAdminToolsNumberField extends PvikAdminToolsBaseField {
+    public function HtmlSingle() {
+        // place code here for returning html.
+        return &#39;&#39;;
+    }
+    
+    public function HtmlOverview() {
+        // place code here for returning html.
+        return &#39;&#39;;
+    }
+    
+    public function Validation() {
+        parent::Validation();
+        if(!is_numeric($this-&gt;GetPOST())){
+            $this-&gt;ValidationState-&gt;SetError($this-&gt;FieldName, &#39;Not an number&#39;);
+        }
+        return $this-&gt;ValidationState;
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+</body>
+</html>
