@@ -1,7 +1,7 @@
 <?php
-self::$Config['PvikAdminTools'] = array ();
-
-
+if(!isset(self::$Config['PvikAdminTools'])){
+	throw new \Exception('PvikAdminTools: PvikAdminTools must be set in config');
+}
 
 // gets and sets the base path of PvikAdminTools
 self::$Config['PvikAdminTools']['BasePath'] = '~' . str_replace('load.php', '', str_replace(getcwd(), '',  realpath ( __FILE__ )));
