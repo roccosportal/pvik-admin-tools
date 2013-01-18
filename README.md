@@ -1,7 +1,7 @@
 PvikAdminTools
 ========
 
-Version: 2.0.1-alpha
+Version: 2.0.2-alpha
 
 License: license.txt
 
