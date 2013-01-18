@@ -2,10 +2,9 @@ RewriteEngine on
 
 
 #No access to sensitive directory
-RewriteRule ^code\/.*$ no-access.php [L]
 RewriteRule ^configs\/.*$ no-access.php [L]
 RewriteRule ^controllers\/.*$ no-access.php [L]
-RewriteRule ^core\/.*$ no-access.php [L]
+RewriteRule ^library\/.*$ no-access.php [L]
 RewriteRule ^views\/.*$ no-access.php [L]
 RewriteRule ^load.php$ no-access.php [L]
 
