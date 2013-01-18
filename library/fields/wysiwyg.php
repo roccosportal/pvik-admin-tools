@@ -15,7 +15,7 @@ class Wysiwyg extends Base {
         
         $File = \PvikAdminTools\Library\Help::FileRelativePath('tinymce/jscripts/tiny_mce/tiny_mce.js');
         // only add file if not already added
-        if(!PvikAdminTools\Library\FileRegister::IsFileRegisterd($File)){
+        if(!\PvikAdminTools\Library\FileRegister::IsFileRegisterd($File)){
             $this->Html .= '<script type="text/javascript" src="' . $File.'" ></script >';
         }
         $this->Html .= '
