@@ -7,8 +7,6 @@ self::$Config['PvikAdminTools'] = array ();
 self::$Config['PvikAdminTools']['BasePath'] = '~' . str_replace('load.php', '', str_replace(getcwd(), '',  realpath ( __FILE__ )));
 
 self::$Config['NamespaceAssociations']['\\PvikAdminTools'] = self::$Config['PvikAdminTools']['BasePath'];
-//include pvik-admin-tools config
-require(\Pvik\Core\Path::RealPath(self::$Config['PvikAdminTools']['BasePath'] .'configs/config.php'));
 
 // add routes
 if(!isset(self::$Config['Routes'])){

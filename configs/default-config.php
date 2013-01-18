@@ -7,4 +7,3 @@ self::$Config['PvikAdminTools']['Login']['PasswordMD5'] = '098f6bcd4621d373cade4
 self::$Config['PvikAdminTools']['FileFolders']= array ('~/files/', '~/images/');
 
 self::$Config['PvikAdminTools']['Tables'] = array ();
-?>
