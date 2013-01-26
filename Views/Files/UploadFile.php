@@ -1,5 +1,5 @@
 <?php
-$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] . 'views/master-pages/master.php');
+$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] . 'Views/MasterPages/Master.php');
 $ValidationState = $this->ViewData->Get('ValidationState');
 $Uploaded = $this->ViewData->Get('Uploaded');
 // set data for the masterpage

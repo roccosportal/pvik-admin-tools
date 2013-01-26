@@ -4,9 +4,7 @@ if(!isset(self::$Config['PvikAdminTools'])){
 }
 
 // gets and sets the base path of PvikAdminTools
-self::$Config['PvikAdminTools']['BasePath'] = '~' . str_replace('load.php', '', str_replace(getcwd(), '',  realpath ( __FILE__ )));
-
-self::$Config['NamespaceAssociations']['\\PvikAdminTools'] = self::$Config['PvikAdminTools']['BasePath'];
+self::$Config['PvikAdminTools']['BasePath'] = '~' . str_replace('Configs/Configure.php', '', str_replace(getcwd(), '',  realpath ( __FILE__ )));
 
 // add routes
 if(!isset(self::$Config['Routes'])){

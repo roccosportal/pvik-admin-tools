@@ -1,5 +1,5 @@
 <?php
-$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] .'views/master-pages/master.php');
+$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] .'Views/MasterPages/Master.php');
 $ModelTableName = $this->ViewData->Get('ModelTableName');
 $SingleHtml = $this->ViewData->Get('SingleHtml');
 // set data for the masterpage

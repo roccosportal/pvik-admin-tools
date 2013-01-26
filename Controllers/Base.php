@@ -73,7 +73,7 @@ abstract class Base extends \Pvik\Web\Controller{
      */
     protected function ExecuteView($Folder = '') {
         if($Folder == ''){
-            $Folder = \Pvik\Core\Config::$Config['PvikAdminTools']['BasePath']. 'views/';
+            $Folder = \Pvik\Core\Config::$Config['PvikAdminTools']['BasePath']. 'Views/';
         }
         parent::ExecuteView($Folder);
     }
@@ -85,7 +85,7 @@ abstract class Base extends \Pvik\Web\Controller{
      */
     protected function ExecuteViewByAction($ActionName, $Folder = '') {
         if($Folder == ''){
-            $Folder = \Pvik\Core\Config::$Config['PvikAdminTools']['BasePath']. 'views/';
+            $Folder = \Pvik\Core\Config::$Config['PvikAdminTools']['BasePath']. 'Views/';
         }
         parent::ExecuteViewByAction($ActionName, $Folder);
     }
