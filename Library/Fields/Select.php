@@ -1,34 +1,34 @@
 <?php
 namespace PvikAdminTools\Library\Fields;
-use \Pvik\Database\Generic\ModelTable;
+use \Pvik\Database\ORM\ModelTable;
 /**
  * Displays a select field.
  */
 class Select extends Base {
     /**
      * Returns the preset value.
-     * @param string $FieldName
-     * @param string $Value
+     * @param string $fieldName
+     * @param string $value
      * @return string 
      */
-    protected function GetSelectPresetValue($FieldName, $Value){
-        if($this->IsPOST($FieldName)){
-            if($this->GetPOST($FieldName)==$Value){
+    protected function getSelectPresetValue($fieldName, $value){
+        if($this->isPOST($fieldName)){
+            if($this->getPOST($fieldName)==$value){
                 return 'selected="selected"';
             }
             return '';
         }
-        elseif(!$this->IsNewEntity()){
-            if($this->Entity->$FieldName == $Value){
+        elseif(!$this->isNewEntity()){
+            if($this->entity->$fieldName == $value){
                 return 'selected="selected"';
             }
             return '';
         }
-        elseif($this->Preset!=''&&$this->Preset==$Value){
+        elseif($this->preset!=''&&$this->preset==$value){
             return 'selected="selected"';
         }
-        elseif($this->ConfigurationHelper->HasValueField($this->FieldName, 'Preset') &&
-                ($this->ConfigurationHelper->GetValue($this->FieldName, 'Preset')==$Value)){
+        elseif($this->configurationHelper->hasValueField($this->fieldName, 'Preset') &&
+                ($this->configurationHelper->getValue($this->fieldName, 'Preset')==$value)){
             return 'selected="selected"';
         }
         else {
@@ -40,31 +40,31 @@ class Select extends Base {
      * Returns the html for the field.
      * @return string 
      */
-    protected function AddHtmlSingleControl(){
-        if($this->FieldDefinitionHelper->IsTypeForeignObject($this->FieldName)){
+    protected function addHtmlSingleControl(){
+        if($this->fieldDefinitionHelper->isTypeForeignObject($this->fieldName)){
           
 
-            $ModelTableName = $this->FieldDefinitionHelper->GetModelTableNameForForeignObject($this->FieldName);
-            $ForeignKeyFieldName = $this->FieldDefinitionHelper->GetForeignKeyFieldName($this->FieldName);
-            $Field = $this->ConfigurationHelper->GetField($this->FieldName);
-            $UseField = $Field['UseField'];
-            $EntityArray = ModelTable::Get($ModelTableName)->LoadAll();
+            $modelTableName = $this->fieldDefinitionHelper->getModelTableNameForForeignObject($this->fieldName);
+            $foreignKeyFieldName = $this->fieldDefinitionHelper->getForeignKeyFieldName($this->fieldName);
+            $field = $this->configurationHelper->getField($this->fieldName);
+            $useField = $field['UseField'];
+            $entityArray = ModelTable::get($modelTableName)->loadAll();
 
-            $this->Html .= '<select class="span8" name="'. strtolower($ForeignKeyFieldName) .'">';
-            if($this->ConfigurationHelper->IsNullable($this->FieldName)||!$this->IsNewEntity){
-                 $this->Html .= '<option value="">(none)</option>';
+            $this->html .= '<select class="span8" name="'. strtolower($foreignKeyFieldName) .'">';
+            if($this->configurationHelper->isNullable($this->fieldName)||!$this->isNewEntity){
+                 $this->html .= '<option value="">(none)</option>';
             }
-            foreach($EntityArray as $Entity){
-                $this->Html .= '<option value="' . $Entity->GetPrimaryKey() .'" '.$this->GetSelectPresetValue($ForeignKeyFieldName, $Entity->GetPrimaryKey()).'>';
-                $this->Html .= $Entity->$UseField;
-                $this->Html .= '</option>';
+            foreach($entityArray as $entity){
+                $this->html .= '<option value="' . $entity->getPrimaryKey() .'" '.$this->getSelectPresetValue($foreignKeyFieldName, $entity->getPrimaryKey()).'>';
+                $this->html .= utf8_decode($entity->$useField);
+                $this->html .= '</option>';
             }
 
 
-            $this->Html .= '</select>';
+            $this->html .= '</select>';
         }
         else {
-            $this->Html .= 'Error';
+            $this->html .= 'Error';
         }
     }
     
@@ -72,35 +72,35 @@ class Select extends Base {
      * Returns the html for the overview.
      * @return string 
      */
-    public function HtmlOverview() {
-        $this->Html = '';
-        $FieldName = $this->FieldName;
-        $Field = $this->ConfigurationHelper->GetField($this->FieldName);
-        $UseField = $Field['UseField'];
-        if($this->Entity->$FieldName!=null){
-             $this->Html = $this->Entity->$FieldName->$UseField;
+    public function htmlOverview() {
+        $this->html = '';
+        $fieldName = $this->fieldName;
+        $field = $this->configurationHelper->getField($this->fieldName);
+        $useField = $field['UseField'];
+        if($this->entity->$fieldName!=null){
+             $this->html = $this->entity->$fieldName->$useField;
         }
-        return $this->Html;
+        return $this->html;
     }
     
     /**
      * Updates a entity.
      */
-    public function Update(){
-        $ForeignKeyFieldName = $this->FieldDefinitionHelper->GetForeignKeyFieldName($this->FieldName);
-        $this->Entity->$ForeignKeyFieldName = $this->GetPOST($ForeignKeyFieldName);
+    public function update(){
+        $foreignKeyFieldName = $this->fieldDefinitionHelper->getForeignKeyFieldName($this->fieldName);
+        $this->entity->$foreignKeyFieldName = $this->getPOST($foreignKeyFieldName);
     }
     
     /**
      * Validates the field value.
      * @return ValidationState 
      */
-    public function Validation() {
-      $Message = '';
-      $ForeignKeyFieldName = $this->FieldDefinitionHelper->GetForeignKeyFieldName($this->FieldName);
-      if(!$this->ConfigurationHelper->IsNullable($this->FieldName)&&$this->GetPOST($ForeignKeyFieldName)==""){
-          $this->ValidationState->SetError($this->FieldName, 'Can not be empty');
+    public function validation() {
+      $message = '';
+      $foreignKeyFieldName = $this->fieldDefinitionHelper->getForeignKeyFieldName($this->fieldName);
+      if(!$this->configurationHelper->isNullable($this->fieldName)&&$this->getPOST($foreignKeyFieldName)==""){
+          $this->validationState->setError($this->fieldName, 'Can not be empty');
       }
-      return $this->ValidationState;
+      return $this->validationState;
     }
 }

@@ -10,19 +10,19 @@ class Wysiwyg extends Base {
      * Returns the html for the field.
      * @return string 
      */
-    protected function AddHtmlSingleControl(){
+    protected function addHtmlSingleControl(){
       
         
-        $File = \PvikAdminTools\Library\Help::FileRelativePath('tinymce/jscripts/tiny_mce/tiny_mce.js');
+        $file = \PvikAdminTools\Library\Help::FileRelativePath('tinymce/jscripts/tiny_mce/tiny_mce.js');
         // only add file if not already added
-        if(!\PvikAdminTools\Library\FileRegister::IsFileRegisterd($File)){
-            $this->Html .= '<script type="text/javascript" src="' . $File.'" ></script >';
+        if(!\PvikAdminTools\Library\FileRegister::isFileRegisterd($file)){
+            $this->html .= '<script type="text/javascript" src="' . $file.'" ></script >';
         }
-        $this->Html .= '
+        $this->html .= '
         <script type="text/javascript" >
         tinyMCE.init({
                  mode : "exact",
-                 elements : "'. $this->GetLowerFieldName() .'-wysiwyg",
+                 elements : "'. $this->getLowerFieldName() .'-wysiwyg",
                 theme : "advanced",
                 
                 // Theme options - button# indicated the row# only
@@ -39,7 +39,7 @@ class Wysiwyg extends Base {
                 convert_urls : false
         });
         </script >';
-        $this->Html .= '<textarea class="span8" id="'. $this->GetLowerFieldName().'-wysiwyg" class="WYSIWYG" name="'. $this->GetLowerFieldName() .'" cols="50" rows="15" >'. htmlentities($this->GetPresetValue()) .'</textarea>';
+        $this->html .= '<textarea class="span8" id="'. $this->getLowerFieldName().'-wysiwyg" class="WYSIWYG" name="'. $this->getLowerFieldName() .'" cols="50" rows="15" >'. htmlentities(utf8_decode($this->getPresetValue())) .'</textarea>';
    
     }
     
@@ -47,9 +47,9 @@ class Wysiwyg extends Base {
      * Returns the html for the overview.
      * @return string 
      */
-    public function HtmlOverview() {
-        $this->Html = '';
-        $FieldName = $this->FieldName;
-        return  $this->Entity->$FieldName;
+    public function htmlOverview() {
+        $this->html = '';
+        $fieldName = $this->fieldName;
+        return  $this->entity->$fieldName;
     }
 }

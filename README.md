@@ -1,11 +1,11 @@
 PvikAdminTools
 ========
 
-Version: 3.0.0-alpha
+Version: 4.0.0-alpha
 
 License: license.txt
 
-Date: 27-01-2013 (dd-mm-yyyy)
+Date: 09-06-2013 (dd-mm-yyyy)
 
 PvikAdminTools is a simple tool for the framework Pvik that helps administrators to create/edit/delete entries on the database and upload files.
 

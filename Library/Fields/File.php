@@ -9,12 +9,12 @@ class File extends Normal{
      * Checks if the value is a file.
      * @return ValidationState 
      */
-    public function Validation() {
-        parent::Validation();
-        if($this->ValidationState->GetError($this->FieldName)==null && !is_file(\Pvik\Core\Path::RealPath($this->GetPOST()))){
-              $this->ValidationState->SetError($this->FieldName, 'Must be a valid file.');
+    public function validation() {
+        parent::validation();
+        if($this->validationState->getError($this->fieldName)==null && !is_file(\Pvik\Core\Path::realPath($this->getPOST()))){
+              $this->validationState->setError($this->fieldName, 'Must be a valid file.');
         }
-        return $this->ValidationState;
+        return $this->validationState;
     }
     
 }

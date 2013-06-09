@@ -1,6 +1,6 @@
 <?php
 namespace PvikAdminTools\Controllers;
-use \Pvik\Database\Generic\ModelTable;
+use \Pvik\Database\ORM\ModelTable;
 use \Pvik\Utils\ValidationState;
 /**
  * Logic for a table list or single entry.
@@ -11,17 +11,17 @@ class Tables extends Base {
      * Contains a helper class for the PvikAdminTools configuration.
      * @var \PvikAdminTools\Library\ConfigurationHelper 
      */
-    protected $ConfigurationHelper;
+    protected $configurationHelper;
 
     /**
      * Returns the name of a model table.
-     * @param string $ParameterTableName lower cased
+     * @param string $parameterTableName lower cased
      * @return string 
      */
-    protected function GetModelTableName($ParameterTableName) {
-        foreach (\Pvik\Core\Config::$Config['PvikAdminTools']['Tables'] as $TableName => $TableConfiguration) {
-            if (strtolower($ParameterTableName) == strtolower($TableName)) {
-                return $TableName;
+    protected function getModelTableName($parameterTableName) {
+        foreach (\Pvik\Core\Config::$config['PvikAdminTools']['Tables'] as $tableName => $tableConfiguration) {
+            if (strtolower($parameterTableName) == strtolower($tableName)) {
+                return $tableName;
             }
         }
         return null;
@@ -30,266 +30,266 @@ class Tables extends Base {
     /**
      * Redirects to the root tables page.
      */
-    protected function RedirectToTables() {
-        $Url = '~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/';
-        $this->RedirectToPath($Url);
+    protected function redirectToTables() {
+        $url = '~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/';
+        $this->redirectToPath($url);
     }
 
     /**
      * Displays a list of all tables.
      */
-    public function IndexAction() {
-        if ($this->CheckPermission()) {
-            $this->ExecuteView();
+    public function indexAction() {
+        if ($this->checkPermission()) {
+            $this->executeView();
         }
     }
 
     /**
      * Redirects to the right action depending on the parameters.
      */
-    public function IndexWithParametersAction() {
-        $this->ConfigurationHelper = new \PvikAdminTools\Library\ConfigurationHelper();
-        if ($this->CheckPermission()) {
-            $Parameters = $this->GetParameters('parameters');
-            if (count($Parameters) >= 2) {
-                $ParameterTableName = $Parameters[0];
-                $ModelTableName = $this->GetModelTableName($ParameterTableName);
-                $this->ConfigurationHelper->SetCurrentTable($ModelTableName);
-                if ($ModelTableName != null) {
-                    $Action = $Parameters[1];
-                    switch ($Action) {
+    public function indexWithParametersAction() {
+        $this->configurationHelper = new \PvikAdminTools\Library\ConfigurationHelper();
+        if ($this->checkPermission()) {
+            $parameters = $this->getParameters('parameters');
+            if (count($parameters) >= 2) {
+                $parameterTableName = $parameters[0];
+                $modelTableName = $this->getModelTableName($parameterTableName);
+                $this->configurationHelper->setCurrentTable($modelTableName);
+                if ($modelTableName != null) {
+                    $action = $parameters[1];
+                    switch ($action) {
                         case 'list':
-                            $this->ListTable($ModelTableName);
+                            $this->listTable($modelTableName);
                             break;
                         case 'new':
-                            $this->NewEntry($ModelTableName);
+                            $this->newEntry($modelTableName);
                             break;
                         case 'edit':
-                            if (count($Parameters) == 3) {
-                                $this->EditEntry($ModelTableName, $Parameters[2]);
+                            if (count($parameters) == 3) {
+                                $this->editEntry($modelTableName, $parameters[2]);
                             } else {
-                                $this->RedirectToTables();
+                                $this->redirectToTables();
                             }
                             break;
                         case 'delete':
-                            if (count($Parameters) == 3) {
-                                $this->DeleteEntry($ModelTableName, $Parameters[2]);
+                            if (count($parameters) == 3) {
+                                $this->deleteEntry($modelTableName, $parameters[2]);
                             } else {
-                                $this->RedirectToTables();
+                                $this->redirectToTables();
                             }
                             break;
                         default:
-                            $this->RedirectToTables();
+                            $this->redirectToTables();
                             break;
                     }
                 } else {
-                    $this->RedirectToTables();
+                    $this->redirectToTables();
                 }
             } else {
-                $this->RedirectToTables();
+                $this->redirectToTables();
             }
         }
     }
 
     /**
      * Lists table entries.
-     * @param string $ModelTableName 
+     * @param string $modelTableName 
      */
-    protected function ListTable($ModelTableName) {
-        $EntityArray = ModelTable::Get($ModelTableName)->LoadAll();
+    protected function listTable($modelTableName) {
+        $entityArray = ModelTable::get($modelTableName)->loadAll();
 
-        $TableHtml = new \PvikAdminTools\Library\TableHtml($EntityArray, $this->Request);
-        $this->ViewData->Set('TableHtml', $TableHtml);
-        $this->ExecuteViewByAction('ListTable');
+        $tableHtml = new \PvikAdminTools\Library\TableHtml($entityArray, $this->request);
+        $this->viewData->set('TableHtml', $tableHtml);
+        $this->executeViewByAction('ListTable');
     }
 
     /**
      * Logic for a new entry. 
-     * @param string $ModelTableName 
+     * @param string $modelTableName 
      */
-    protected function NewEntry($ModelTableName) {
-        $this->ViewData->Set('ModelTableName', $ModelTableName);
-        $ParameterPresetValues = $this->GetParameters('preset-values');
+    protected function newEntry($modelTableName) {
+        $this->viewData->set('ModelTableName', $modelTableName);
+        $parameterPresetValues = $this->getParameters('preset-values');
 
-        $PresetValues = array();
-        if ($ParameterPresetValues != null) {
+        $presetValues = array();
+        if ($parameterPresetValues != null) {
             // preset values must be a even number
-            if(count($ParameterPresetValues) % 2 == 0){
+            if(count($parameterPresetValues) % 2 == 0){
                 // convert to associative array
-                for ($Index = 0; $Index < count($ParameterPresetValues); $Index++) {
-                    $Key = $ParameterPresetValues[$Index];
-                    $Index++;
-                    $Value = $ParameterPresetValues[$Index];
-                    $PresetValues[$Key] = $Value;
+                for ($index = 0; $index < count($parameterPresetValues); $index++) {
+                    $key = $parameterPresetValues[$index];
+                    $index++;
+                    $value = $parameterPresetValues[$index];
+                    $presetValues[$key] = $value;
                 }
                 
             }
             else {
-                $this->RedirectToTables();
+                $this->redirectToTables();
                 exit();
             }
             
         } 
-        $this->ViewData->Set('PresetValues',$PresetValues);
+        $this->viewData->set('PresetValues',$presetValues);
         
 
-        $ModelTable = ModelTable::Get($ModelTableName);
+        $modelTable = ModelTable::get($modelTableName);
 
-        $EntityClassName = $ModelTable->GetEntityClassName();
-        $Entity = new $EntityClassName();
+        $entityClassName = $modelTable->getEntityClassName();
+        $entity = new $entityClassName();
 
         
         // data send
-        if ($this->Request->IsPOST('submit')) {
+        if ($this->request->isPOST('submit')) {
            
 
-            $ValidationState = new ValidationState();
-            $Fields = array();
-            foreach ($this->ConfigurationHelper->GetFieldList() as $FieldName) {
-                $Type = $this->ConfigurationHelper->GetFieldType($FieldName);
-                $FieldClassName = '\\PvikAdminTools\\Library\\Fields\\' . $Type;
-                if (!class_exists($FieldClassName)) {
-                    throw new \Exception('PvikAdminTools: The type ' . $Type . ' does not exists. Used for the field ' . $FieldName);
+            $validationState = new ValidationState();
+            $fields = array();
+            foreach ($this->configurationHelper->getFieldList() as $fieldName) {
+                $type = $this->configurationHelper->getFieldType($fieldName);
+                $fieldClassName = '\\PvikAdminTools\\Library\\Fields\\' . $type;
+                if (!class_exists($fieldClassName)) {
+                    throw new \Exception('PvikAdminTools: The type ' . $type . ' does not exists. Used for the field ' . $fieldName);
                 }
-                $Field = new $FieldClassName($FieldName, $Entity, $this->Request, $ValidationState);
-                /* @var $Field PvikAdminToolsBaseField */
-                array_push($Fields, $Field);
-                $ValidationState = $Field->Validation();
+                $field = new $fieldClassName($fieldName, $entity, $this->request, $validationState);
+                /* @var $field PvikAdminToolsBaseField */
+                array_push($fields, $field);
+                $validationState = $field->validation();
             }
-            if ($ValidationState->IsValid()) {
+            if ($validationState->isValid()) {
                 // update all fields
-                foreach ($Fields as $Field) {
-                    /* @var $Field PvikAdminToolsBaseField */
-                    $Field->Update();
+                foreach ($fields as $field) {
+                    /* @var $field PvikAdminToolsBaseField */
+                    $field->update();
                 }
-                $Entity->Insert();
+                $entity->insert();
                 
-                $RedirectBackUrl = $this->Request->GetGET('redirect-back-url');
-                if($RedirectBackUrl!=null){
+                $redirectBackUrl = $this->request->getGET('redirect-back-url');
+                if($redirectBackUrl!=null){
                     // the user was was in edit mode of an table entry
                     // clicked on new in a foreign id and and created/updated/deleted a entry
                     // now we redirect back to the edit mode
-                     $this->RedirectToPath(urldecode($RedirectBackUrl));
+                     $this->redirectToPath(urldecode($redirectBackUrl));
                 }
                 else {
                     // redirect to inserted entry
-                    $this->RedirectToPath('~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/' . strtolower($ModelTableName) . ':edit:' . $Entity->GetPrimaryKey() . '/');
+                    $this->redirectToPath('~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/' . strtolower($modelTableName) . ':edit:' . $entity->getPrimaryKey() . '/');
                 }
                 
             } else {
                
 
-                $SingleHtml = new \PvikAdminTools\Library\SingleHtml($Entity, $ValidationState, $this->Request);
-                $SingleHtml->SetPresetValues($PresetValues);
-                $this->ViewData->Set('SingleHtml', $SingleHtml);
+                $singleHtml = new \PvikAdminTools\Library\SingleHtml($entity, $validationState, $this->request);
+                $singleHtml->setPresetValues($presetValues);
+                $this->viewData->set('SingleHtml', $singleHtml);
 
 
-                $this->ExecuteViewByAction('NewEntry');
+                $this->executeViewByAction('NewEntry');
             }
         } else {
-            $ValidationState = new ValidationState();
+            $validationState = new ValidationState();
           
-            $SingleHtml = new \PvikAdminTools\Library\SingleHtml($Entity, $ValidationState, $this->Request);
-            $SingleHtml->SetPresetValues($PresetValues);
+            $singleHtml = new \PvikAdminTools\Library\SingleHtml($entity, $validationState, $this->request);
+            $singleHtml->setPresetValues($presetValues);
 
-            $this->ViewData->Set('SingleHtml', $SingleHtml);
-            $this->ExecuteViewByAction('NewEntry');
+            $this->viewData->set('SingleHtml', $singleHtml);
+            $this->executeViewByAction('NewEntry');
         }
     }
 
     /**
      * Logic for editing an entry.
-     * @param string $ModelTableName
-     * @param string $EntityPrimaryKey 
+     * @param string $modelTableName
+     * @param string $entityPrimaryKey 
      */
-    protected function EditEntry($ModelTableName, $EntityPrimaryKey) {
+    protected function editEntry($modelTableName, $entityPrimaryKey) {
         
-        $this->ViewData->Set('ModelTableName', $ModelTableName);
-        $ModelTable = ModelTable::Get($ModelTableName);
-        $Entity = $ModelTable->LoadByPrimaryKey($EntityPrimaryKey);
-        if ($Entity != null) {
+        $this->viewData->set('ModelTableName', $modelTableName);
+        $modelTable = ModelTable::get($modelTableName);
+        $entity = $modelTable->loadByPrimaryKey($entityPrimaryKey);
+        if ($entity != null) {
             // sets the redirect back url 
             // if somebody clicks on new in a foreign table and submit the form he gets redirect back to this entry
-            $RedirectBackUrl =  '~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/' . strtolower($ModelTableName) . ':edit:' . $Entity->GetPrimaryKey() . '/';
-            $Fields = array();
+            $redirectBackUrl =  '~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/' . strtolower($modelTableName) . ':edit:' . $entity->getPrimaryKey() . '/';
+            $fields = array();
 
             // data send
-            if ($this->Request->IsPOST('submit')) {
-                $ValidationState = new ValidationState();
-                $Fields = array();
-                foreach ($this->ConfigurationHelper->GetFieldList() as $FieldName) {
-                    $Type = $this->ConfigurationHelper->GetFieldType($FieldName);
-                    $FieldClassName = '\\PvikAdminTools\\Library\\Fields\\' . $Type;
-                    if (!class_exists($FieldClassName)) {
-                        throw new \Exception('PvikAdminTools: The type ' . $Type . ' does not exists. Used for the field ' . $FieldName);
+            if ($this->request->isPOST('submit')) {
+                $validationState = new ValidationState();
+                $fields = array();
+                foreach ($this->configurationHelper->getFieldList() as $fieldName) {
+                    $type = $this->configurationHelper->getFieldType($fieldName);
+                    $fieldClassName = '\\PvikAdminTools\\Library\\Fields\\' . $type;
+                    if (!class_exists($fieldClassName)) {
+                        throw new \Exception('PvikAdminTools: The type ' . $type . ' does not exists. Used for the field ' . $fieldName);
                     }
-                    $Field = new $FieldClassName($FieldName, $Entity, $this->Request, $ValidationState);
-                    /* @var $Field PvikAdminToolsBaseField */
-                    array_push($Fields, $Field);
-                    $ValidationState = $Field->Validation();
+                    $field = new $fieldClassName($fieldName, $entity, $this->request, $validationState);
+                    /* @var $field PvikAdminToolsBaseField */
+                    array_push($fields, $field);
+                    $validationState = $field->validation();
                 }
 
-                $this->ViewData->Set('ValidationState', $ValidationState);
+                $this->viewData->set('ValidationState', $validationState);
 
-                if ($ValidationState->IsValid()) {
+                if ($validationState->isValid()) {
                     // update all fields
-                    foreach ($Fields as $Field) {
-                        /* @var $Field PvikAdminToolsBaseField */
-                        $Field->Update();
+                    foreach ($fields as $field) {
+                        /* @var $field PvikAdminToolsBaseField */
+                        $field->update();
                     }
-                    $Entity->Update();
+                    $entity->update();
                 }
                 
-                $RedirectBackUrlAsParameter = $this->Request->GetGET('redirect-back-url');
-                if($RedirectBackUrlAsParameter!=null){
+                $redirectBackUrlAsParameter = $this->request->getGET('redirect-back-url');
+                if($redirectBackUrlAsParameter!=null){
                     // the user was was in edit mode of an table entry
                     // clicked on new in a foreign id and and created/updated/deleted a entry
                     // now we redirect back to the edit mode
-                     $this->RedirectToPath(urldecode($RedirectBackUrlAsParameter));
+                     $this->redirectToPath(urldecode($redirectBackUrlAsParameter));
                 }
                 else {
 
-                    $SingleHtml = new \PvikAdminTools\Library\SingleHtml($Entity, $ValidationState, $this->Request);
-                    $SingleHtml->SetForeignTableButtonRedirectBackUrl($RedirectBackUrl);
-                    $this->ViewData->Set('SingleHtml', $SingleHtml);
+                    $singleHtml = new \PvikAdminTools\Library\SingleHtml($entity, $validationState, $this->request);
+                    $singleHtml->setForeignTableButtonRedirectBackUrl($redirectBackUrl);
+                    $this->viewData->set('SingleHtml', $singleHtml);
 
-                    $this->ExecuteViewByAction('EditEntry');
+                    $this->executeViewByAction('EditEntry');
                 }
             } else {
-                $ValidationState = new ValidationState();
+                $validationState = new ValidationState();
 
-                $SingleHtml = new \PvikAdminTools\Library\SingleHtml($Entity, $ValidationState, $this->Request);
-                $SingleHtml->SetForeignTableButtonRedirectBackUrl($RedirectBackUrl);
-                $this->ViewData->Set('SingleHtml', $SingleHtml);
+                $singleHtml = new \PvikAdminTools\Library\SingleHtml($entity, $validationState, $this->request);
+                $singleHtml->setForeignTableButtonRedirectBackUrl($redirectBackUrl);
+                $this->viewData->set('SingleHtml', $singleHtml);
 
-                $this->ExecuteViewByAction('EditEntry');
+                $this->executeViewByAction('EditEntry');
             }
         } else {
-            $this->RedirectToTables();
+            $this->redirectToTables();
         }
     }
 
     /**
      * Logic for deleting an entry.
-     * @param type $ModelTableName
-     * @param type $EntityPrimaryKey 
+     * @param type $modelTableName
+     * @param type $entityPrimaryKey 
      */
-    protected function DeleteEntry($ModelTableName, $EntityPrimaryKey) {
-        $Entity = ModelTable::Get($ModelTableName)->LoadByPrimaryKey($EntityPrimaryKey);
-        if ($Entity != null) {
-            $Entity->Delete();
+    protected function deleteEntry($modelTableName, $entityPrimaryKey) {
+        $entity = ModelTable::get($modelTableName)->loadByPrimaryKey($entityPrimaryKey);
+        if ($entity != null) {
+            $entity->delete();
         }
         
-        $RedirectBackUrl = $this->Request->GetGET('redirect-back-url');
-        if($RedirectBackUrl!=null){
+        $redirectBackUrl = $this->request->getGET('redirect-back-url');
+        if($redirectBackUrl!=null){
             // the user was was in edit mode of an table entry
             // clicked on new in a foreign id and and created/updated/deleted a entry
             // now we redirect back to the edit mode
-             $this->RedirectToPath(urldecode($RedirectBackUrl));
+             $this->redirectToPath(urldecode($redirectBackUrl));
         }
         else {
-            $Url = '~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/' . strtolower($ModelTableName) . ':list/';
-            $this->RedirectToPath($Url);
+            $url = '~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/' . strtolower($modelTableName) . ':list/';
+            $this->redirectToPath($url);
         }
     }
 

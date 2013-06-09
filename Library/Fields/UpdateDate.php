@@ -8,11 +8,11 @@ class UpdateDate extends Base{
      * Returns the html for the field.
      * @return string 
      */
-     protected function AddHtmlSingleControl(){
+     protected function addHtmlSingleControl(){
        
-        $Disabled = 'disabled="disabled"';
+        $disabled = 'disabled="disabled"';
        
-        $this->Html .= '<input class="span8" name="'. $this->GetLowerFieldName() .'" type="text" value="'. $this->GetPresetValue() .'" ' . $Disabled . ' />';
+        $this->html .= '<input class="span8" name="'. $this->getLowerFieldName() .'" type="text" value="'. $this->getPresetValue() .'" ' . $disabled . ' />';
         
        
     }
@@ -21,27 +21,27 @@ class UpdateDate extends Base{
      * Returns the html for the overview.
      * @return type 
      */
-    public function HtmlOverview() {
-        $this->Html = '';
-        $FieldName = $this->FieldName;
-        return  $this->Entity->$FieldName;
+    public function htmlOverview() {
+        $this->html = '';
+        $fieldName = $this->fieldName;
+        return  $this->entity->$fieldName;
     }
     
     /**
      * Checks if the field value is valid.
      * @return ValidationState 
      */
-    public function Validation() {
+    public function validation() {
         // ignore 
-        return $this->ValidationState;
+        return $this->validationState;
     }
     
     /**
      *  Updates the model field.
      */
-    public function Update(){
-        $FieldName = $this->FieldName;
-        $this->Entity->$FieldName =date('Y-m-d');
+    public function update(){
+        $fieldName = $this->fieldName;
+        $this->entity->$fieldName =date('Y-m-d');
     }
     
     

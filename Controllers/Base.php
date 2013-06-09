@@ -8,37 +8,37 @@ abstract class Base extends \Pvik\Web\Controller{
     
     /**
      * 
-     * @param \Pvik\Web\Request $Request
-     * @param string $ControllerName
+     * @param \Pvik\Web\Request $request
+     * @param string $controllerName
      */
-    public function __construct(Request $Request, $ControllerName) {
-        parent::__construct($Request, $ControllerName);
+    public function __construct(Request $request, $controllerName) {
+        parent::__construct($request, $controllerName);
         // strip out  \PvikAdminTools\Controllers\
-        $this->ControllerName = str_replace('\\PvikAdminTools\\Controllers\\', '', $ControllerName);
+        $this->controllerName = str_replace('\\PvikAdminTools\\Controllers\\', '', $controllerName);
     }
     /**
      * Checks if the user is logged in.
      * @return bool 
      */
-    protected function LoggedIn(){
-        $this->Request->SessionStart();
+    protected function loggedIn(){
+        $this->request->sessionStart();
         // logged in
         if(isset($_SESSION['AdminPvikToolsLoggedIn']) && $_SESSION['AdminPvikToolsLoggedIn']  == true){
             return true;
         }
         // check if login data send
-        return $this->CheckLoginData();
+        return $this->checkLoginData();
     }
     
     /**
      * Checks if the login data send and log user in.
      * @return bool 
      */
-    protected function CheckLoginData(){
-       if($this->Request->IsPOST('login')&&$this->Request->IsPOST('password')){
+    protected function checkLoginData(){
+       if($this->request->isPOST('login')&&$this->request->isPOST('password')){
             // check log in data
-            $LoginData = \Pvik\Core\Config::$Config['PvikAdminTools']['Login'];
-            if($this->Request->GetPOST('username')==$LoginData['Username']&&md5($this->Request->GetPOST('password'))==$LoginData['PasswordMD5']){
+            $loginData = \Pvik\Core\Config::$config['PvikAdminTools']['Login'];
+            if($this->request->getPOST('username')==$loginData['Username']&&md5($this->request->getPOST('password'))==$loginData['PasswordMD5']){
                 // log in data correct
                 // log in
                 $_SESSION['AdminPvikToolsLoggedIn'] = true;
@@ -53,14 +53,14 @@ abstract class Base extends \Pvik\Web\Controller{
     
     /**
      * Checks if the user have permission and redirects you to the login page.
-     * @param bool $AutoRedirect if off the user doesn't get redirect to the log in page.
+     * @param bool $autoRedirect if off the user doesn't get redirect to the log in page.
      * @return bool 
      */
-    protected function CheckPermission($AutoRedirect = true){
-        if(!$this->LoggedIn()){
-                if($AutoRedirect){
+    protected function checkPermission($autoRedirect = true){
+        if(!$this->loggedIn()){
+                if($autoRedirect){
                     // call action login
-                    $this->RedirectToController('\\PvikAdminTools\\Controllers\\Account', 'Login');
+                    $this->redirectToController('\\PvikAdminTools\\Controllers\\Account', 'Login');
                 }
                 return false;
         }
@@ -69,35 +69,35 @@ abstract class Base extends \Pvik\Web\Controller{
     
     /**
      * Searches a view in the PvikAdminTools views folder and executes it.
-     * @param string $Folder 
+     * @param string $folder 
      */
-    protected function ExecuteView($Folder = '') {
-        if($Folder == ''){
-            $Folder = \Pvik\Core\Config::$Config['PvikAdminTools']['BasePath']. 'Views/';
+    protected function executeView($folder = '') {
+        if($folder == ''){
+            $folder = \Pvik\Core\Config::$config['PvikAdminTools']['BasePath']. 'Views/';
         }
-        parent::ExecuteView($Folder);
+        parent::executeView($folder);
     }
     
     /**
      * Searches a view in the PvikAdminTools view folder and executes it.
-     * @param string $ActionName
-     * @param string $Folder 
+     * @param string $actionName
+     * @param string $folder 
      */
-    protected function ExecuteViewByAction($ActionName, $Folder = '') {
-        if($Folder == ''){
-            $Folder = \Pvik\Core\Config::$Config['PvikAdminTools']['BasePath']. 'Views/';
+    protected function executeViewByAction($actionName, $folder = '') {
+        if($folder == ''){
+            $folder = \Pvik\Core\Config::$config['PvikAdminTools']['BasePath']. 'Views/';
         }
-        parent::ExecuteViewByAction($ActionName, $Folder);
+        parent::executeViewByAction($actionName, $folder);
     }
     
     /**
      * Returns an array of a url parameter that is build like /param:param2:param3/
-     * @param string $ParameterName
+     * @param string $parameterName
      * @return array 
      */
-    protected function GetParameters($ParameterName){
-        if($this->Request->GetParameters()->ContainsKey($ParameterName)){
-            return preg_split('/:/' ,$this->Request->GetParameters()->Get($ParameterName));
+    protected function getParameters($parameterName){
+        if($this->request->getParameters()->containsKey($parameterName)){
+            return preg_split('/:/' ,$this->request->getParameters()->get($parameterName));
         }
         return null;
     }

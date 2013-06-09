@@ -1,8 +1,8 @@
 <?php
 namespace PvikAdminTools\Library;
-use \Pvik\Database\Generic\Entity;
-use \Pvik\Database\Generic\EntityArray;
-use \Pvik\Database\Generic\ModelTable;
+use \Pvik\Database\ORM\Entity;
+use \Pvik\Database\ORM\EntityArray;
+use \Pvik\Database\ORM\ModelTable;
 use \PvikAdminTools\Library\ConfigurationHelper;
 use \Pvik\Utils\ValidationState;
 use \Pvik\Web\Request;
@@ -14,173 +14,173 @@ class SingleHtml{
      * The entity entry that is displayed.
      * @var Entity 
      */
-    protected $Entity;
+    protected $entity;
     /**
      * A helper class for the PvikAdminTools configuration.
      * @var ConfigurationHelper 
      */
-    protected $ConfigurationHelper;
+    protected $configurationHelper;
     /**
      * The ValidationState of the current entity.
      * @var ValidationState
      */
-    protected $ValidationState;
+    protected $validationState;
     /**
      * Indicates if a model is new.
      * @var bool 
      */
-    protected $IsNewEntity;
+    protected $isNewEntity;
 
     /**
      * 
      * @var \Pvik\Web\Request 
      */
-    protected $Request;
+    protected $request;
     
     /**
      * Contains an associative array of field preset values.
      * @var array 
      */
-    protected $PresetValues;
+    protected $presetValues;
     
     /**
      * Contains the redirect back url for foreign tables after clicking new and submitting the form
      * @var string 
      */
-    protected $ForeignTableButtonRedirectBackUrl;
+    protected $foreignTableButtonRedirectBackUrl;
     
     /**
      * The html that is displayed.
      * @var string. 
      */
-    protected $Html;
+    protected $html;
     
     /**
      *
-     * @param Entity $Entity
-     * @param ValidationState $ValidationState 
+     * @param Entity $entity
+     * @param ValidationState $validationState 
      */
-    public function __construct(Entity $Entity,ValidationState $ValidationState, Request $Request){
+    public function __construct(Entity $entity,ValidationState $validationState, Request $request){
         
-        $this->Entity = $Entity;
-        $this->Request = $Request;
-        $this->ConfigurationHelper = new ConfigurationHelper();
-        $this->ConfigurationHelper->SetCurrentTable($this->Entity->GetModelTable()->GetTableName());
-        $this->ValidationState = $ValidationState;
-        if($this->Entity->GetPrimaryKey()==null||$this->Entity->GetPrimaryKey()==''){
-            $this->IsNewEntity = true;
+        $this->entity = $entity;
+        $this->request = $request;
+        $this->configurationHelper = new ConfigurationHelper();
+        $this->configurationHelper->setCurrentTable($this->entity->getModelTable()->getModelTableName());
+        $this->validationState = $validationState;
+        if($this->entity->getPrimaryKey()==null||$this->entity->getPrimaryKey()==''){
+            $this->isNewEntity = true;
         }
         else {
-            $this->IsNewEntity = false;
+            $this->isNewEntity = false;
         }
-        $this->PresetValues = array();
+        $this->presetValues = array();
     }
     
     /**
      * Checks if the entity is new.
      * @return bool 
      */
-    protected function IsNewEntity(){
-        return $this->IsNewEntity;
+    protected function isNewEntity(){
+        return $this->isNewEntity;
     }
     
     /**
      * Set the preset values for fields.
      * Must be an associative array.
-     * @param array $PresetValues 
+     * @param array $presetValues 
      */
-    public function SetPresetValues(array $PresetValues){
-        $this->PresetValues = $PresetValues;
+    public function setPresetValues(array $presetValues){
+        $this->presetValues = $presetValues;
     }
     
     /**
      * This functions set a redirect back url when you click on new in a foreign table.
      * After you submitted the new table entry the form redirects back to the the url.
-     * @param string $Url 
+     * @param string $url 
      */
-    public function SetForeignTableButtonRedirectBackUrl($Url){
-        $this->ForeignTableButtonRedirectBackUrl = $Url;
+    public function setForeignTableButtonRedirectBackUrl($url){
+        $this->foreignTableButtonRedirectBackUrl = $url;
     }
     
     /**
      * Returns the html of the entry.
      * @return string 
      */
-    public function ToHtml(){
-        $this->Html = '<form class="form-vertical" method="post">';
-        foreach($this->ConfigurationHelper->GetFieldList() as $FieldName){
-            $Type = $this->ConfigurationHelper->GetFieldType($FieldName);
-            $FieldClassName = '\\PvikAdminTools\\Library\\Fields\\' . $Type;
-            if(!class_exists($FieldClassName)){
-                throw new \Exception('PvikAdminTools: The type '.$Type . ' does not exists. Used for the field '. $FieldName);
+    public function toHtml(){
+        $this->html = '<form class="form-vertical" method="post">';
+        foreach($this->configurationHelper->getFieldList() as $fieldName){
+            $type = $this->configurationHelper->getFieldType($fieldName);
+            $fieldClassName = '\\PvikAdminTools\\Library\\Fields\\' . $type;
+            if(!class_exists($fieldClassName)){
+                throw new \Exception('PvikAdminTools: The type '.$type . ' does not exists. Used for the field '. $fieldName);
             }
-            $Field = new $FieldClassName($FieldName, $this->Entity, $this->Request, $this->ValidationState);
-            /* @var $Field \PvikAdminTools\Library\Fields\Base */
-            if($Field->IsVisibleSingle()){
-                if(isset($this->PresetValues[strtolower($FieldName)])){
-                    $Field->SetPreset($this->PresetValues[strtolower($FieldName)]);
+            $field = new $fieldClassName($fieldName, $this->entity, $this->request, $this->validationState);
+            /* @var $field \PvikAdminTools\Library\Fields\Base */
+            if($field->isVisibleSingle()){
+                if(isset($this->presetValues[strtolower($fieldName)])){
+                    $field->setPreset($this->presetValues[strtolower($fieldName)]);
                 }
                
-                $this->Html .= $Field->HtmlSingle();
+                $this->html .= $field->htmlSingle();
               
             }
             
             
         }
        
-        $this->AddHtmlSubmit();
-        $this->Html .= '</form>';
+        $this->addHtmlSubmit();
+        $this->html .= '</form>';
         
-        if(!$this->IsNewEntity()&&$this->ConfigurationHelper->HasForeignTables()){
-             $this->Html .= '<div class="foreign-tables-field">';
-            foreach($this->ConfigurationHelper->GetForeignTables() as $ForeignTable => $Configuration){
-                $PrimaryKey = $this->Entity->GetPrimaryKey();
-                $ForeignKey = $Configuration['ForeignKey'];
-                $ModelTable = ModelTable::Get($ForeignTable);
-                $EntityArray =  $ModelTable->LoadAll();
-                $EntityArray = $EntityArray->FilterEquals($ForeignKey, $PrimaryKey);
-                $TableHtml =  new \PvikAdminTools\Library\TableHtml($EntityArray,$this->Request);
+        if(!$this->isNewEntity()&&$this->configurationHelper->hasForeignTables()){
+             $this->html .= '<div class="foreign-tables-field">';
+            foreach($this->configurationHelper->getForeignTables() as $foreignTable => $configuration){
+                $primaryKey = $this->entity->getPrimaryKey();
+                $foreignKey = $configuration['ForeignKey'];
+                $modelTable = ModelTable::get($foreignTable);
+                $entityArray =  $modelTable->loadAll();
+                $entityArray = $entityArray->filterEquals($foreignKey, $primaryKey);
+                $tableHtml =  new \PvikAdminTools\Library\TableHtml($entityArray,$this->request);
                 // saerch for fields that we don't need to show
-                $ForeignObjectFieldNames = array ();
-                $Helper = $ModelTable->GetFieldDefinitionHelper();
-                foreach($Helper->GetFieldList() as $FieldName){
+                $foreignObjectFieldNames = array ();
+                $helper = $modelTable->getFieldDefinitionHelper();
+                foreach($helper->getFieldList() as $fieldName){
                     // search for a foreign object that uses that refers to the original model
                     // we don't need to show this table column
-                    if($Helper->IsTypeForeignObject($FieldName)){
-                        if($Helper->GetForeignKeyFieldName($FieldName)==$ForeignKey){
-                            array_push($ForeignObjectFieldNames,$FieldName);
+                    if($helper->isTypeForeignObject($fieldName)){
+                        if($helper->getForeignKeyFieldName($fieldName)==$foreignKey){
+                            array_push($foreignObjectFieldNames,$fieldName);
                         }
                     }
                 }
                 
-                $TableHtml->SetHiddenFields($ForeignObjectFieldNames);
+                $tableHtml->setHiddenFields($foreignObjectFieldNames);
                 
                 // set preset values
-                $PresetValues = array ();
-                foreach($ForeignObjectFieldNames as $ForeignObjectFieldName){
-                    $PresetValues[$ForeignObjectFieldName] = $PrimaryKey;
+                $presetValues = array ();
+                foreach($foreignObjectFieldNames as $foreignObjectFieldName){
+                    $presetValues[$foreignObjectFieldName] = $primaryKey;
                 }
-                $TableHtml->SetNewButtonPresetValues($PresetValues);
+                $tableHtml->setNewButtonPresetValues($presetValues);
                 
-                if($this->ForeignTableButtonRedirectBackUrl!=null){
-                    $TableHtml->SetButtonRedirectBack($this->ForeignTableButtonRedirectBackUrl);
+                if($this->foreignTableButtonRedirectBackUrl!=null){
+                    $tableHtml->setButtonRedirectBack($this->foreignTableButtonRedirectBackUrl);
                 }
-                $this->Html .= '<div class="field">';
-                $this->Html .= '<label class="label-field">' . $ForeignTable . '</label>';
-                $this->Html .= $TableHtml->ToHtml();
-                $this->Html .= '</div>';
+                $this->html .= '<div class="field">';
+                $this->html .= '<label class="label-field">' . $foreignTable . '</label>';
+                $this->html .= $tableHtml->toHtml();
+                $this->html .= '</div>';
             }
-            $this->Html .= '</div>';
+            $this->html .= '</div>';
         }
         
-        return $this->Html;
+        return $this->html;
     }
     
     /**
      * Adds a submit button to the html.
      */
-    protected function AddHtmlSubmit(){
-         $this->Html .= '<div class="control-group">
+    protected function addHtmlSubmit(){
+         $this->html .= '<div class="control-group">
                     <div class="controls">
                         <button type="submit" name="submit" class="btn">Submit</button>
                     </div>

@@ -8,42 +8,42 @@ class Normal extends Base{
      * Returns the html.
      * @return string 
      */
-    public function HtmlSingle(){
-        $this->Html = '';
-        $this->Html .= '<div class="control-group ';
+    public function htmlSingle(){
+        $this->html = '';
+        $this->html .= '<div class="control-group ';
         
-        $Message = $this->ValidationState->GetError($this->FieldName);
-        if($Message!=''){
-            $this->Html .= 'error';
+        $message = $this->validationState->getError($this->fieldName);
+        if($message!=''){
+            $this->html .= 'error';
         }
-        $this->Html .= '">';
-        $this->AddHtmlLabel();
-        $this->Html .= '<div class="controls">';
-        $this->AddHtmlSingleControl();
-        $this->AddHtmlValidationField();
-        $this->Html .= '</div>';
-        $this->Html .= '</div>';
+        $this->html .= '">';
+        $this->addHtmlLabel();
+        $this->html .= '<div class="controls">';
+        $this->addHtmlSingleControl();
+        $this->addHtmlValidationField();
+        $this->html .= '</div>';
+        $this->html .= '</div>';
        
-        return $this->Html;
+        return $this->html;
     }
     
-    protected function AddHtmlSingleControl(){
-        $Disabled = '';
-        if($this->ConfigurationHelper->FieldExists($this->FieldName)
-                && $this->ConfigurationHelper->IsDisabled($this->FieldName)){
-            $Disabled = 'disabled="disabled"';
+    protected function addHtmlSingleControl(){
+        $disabled = '';
+        if($this->configurationHelper->fieldExists($this->fieldName)
+                && $this->configurationHelper->isDisabled($this->fieldName)){
+            $disabled = 'disabled="disabled"';
         }
-        $this->Html .= '<input class="span8" name="'. $this->GetLowerFieldName() .'" type="text" value="'. $this->GetPresetValue() .'" ' . $Disabled . ' />';
+        $this->html .= '<input class="span8" name="'. $this->getLowerFieldName() .'" type="text" value="'. htmlentities(utf8_decode($this->getPresetValue())) .'" ' . $disabled . ' />';
     }
     
     /**
      * Returns the html for the overview.
      * @return type 
      */
-    public function HtmlOverview() {
-        $this->Html = '';
-        $FieldName = $this->FieldName;
-        return  $this->Entity->$FieldName;
+    public function htmlOverview() {
+        $this->html = '';
+        $fieldName = $this->fieldName;
+        return  htmlentities(utf8_decode($this->entity->$fieldName));
     }
     
     

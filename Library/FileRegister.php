@@ -8,30 +8,30 @@ class FileRegister {
      * Contains the file paths.
      * @var array 
      */
-    protected static $Files;
+    protected static $files;
     
     /**
      * Registers a path.
-     * @param string $Path 
+     * @param string $path 
      */
-    public static function RegisterFile($Path){
-        if(!is_array(self::$Files)){
-            self::$Files = array();
+    public static function registerFile($path){
+        if(!is_array(self::$files)){
+            self::$files = array();
         }
-        array_push(self::$Files, $Path);
+        array_push(self::$files, $path);
     }
     
     /**
      * checks if a file is already registerd.
-     * @param string $Path
+     * @param string $path
      * @return bool 
      */
-    public static function IsFileRegisterd($Path){
-        if(!is_array(self::$Files)){
-            self::$Files = array();
+    public static function isFileRegisterd($path){
+        if(!is_array(self::$files)){
+            self::$files = array();
         }
         
-        if(in_array($Path, self::$Files)){
+        if(in_array($path, self::$files)){
             return true;
         }
         else {

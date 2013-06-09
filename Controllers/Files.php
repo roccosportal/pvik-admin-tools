@@ -8,45 +8,45 @@ class Files extends Base{
     /**
      * Logic for uploading a file.
      */
-    public function UploadFileAction(){
-        if($this->CheckPermission()){
-            $ValidationState = new ValidationState();
-            $Uploaded = false;
+    public function uploadFileAction(){
+        if($this->checkPermission()){
+            $validationState = new ValidationState();
+            $uploaded = false;
             // post data send
-            if($this->Request->IsPOST('submit')){
-                $Folders = \Pvik\Core\Config::$Config['PvikAdminTools']['FileFolders'];
-                $SelectedFolder =$this->Request->GetPOST('folder');
-                $FolderValid = false;
-                foreach($Folders as $Folder){
-                    if($SelectedFolder==$Folder){
-                        $FolderValid = true;
+            if($this->request->isPOST('submit')){
+                $folders = \Pvik\Core\Config::$config['PvikAdminTools']['FileFolders'];
+                $selectedFolder =$this->request->getPOST('folder');
+                $folderValid = false;
+                foreach($folders as $folder){
+                    if($selectedFolder==$folder){
+                        $folderValid = true;
                         break;
                     }
                 }
-                if ($FolderValid&&isset($_FILES['file']) && $_FILES['file']['error'] == 0){
-                    $FileName =  $_FILES['file']['name'];
-                    if($this->Request->IsPOST('name')&&$this->Request->GetPOST('name')!=''){
-                        $FileName = $this->Request->GetPOST('name');
+                if ($folderValid&&isset($_FILES['file']) && $_FILES['file']['error'] == 0){
+                    $fileName =  $_FILES['file']['name'];
+                    if($this->request->isPOST('name')&&$this->request->getPOST('name')!=''){
+                        $fileName = $this->request->getPOST('name');
                     }
-                    $DiretoryName = dirname(\Pvik\Core\Path::RealPath($SelectedFolder . $FileName));
-                    if(!is_dir($DiretoryName)){
-                        if (!mkdir($DiretoryName, 0777, true)){
-                            $ValidationState->SetError('File', 'error creating folder');
+                    $diretoryName = dirname(\Pvik\Core\Path::realPath($selectedFolder . $fileName));
+                    if(!is_dir($diretoryName)){
+                        if (!mkdir($diretoryName, 0777, true)){
+                            $validationState->setError('File', 'error creating folder');
                         }
                     }
-                    if($ValidationState->IsValid()){
-                        move_uploaded_file($_FILES['file']['tmp_name'],\Pvik\Core\Path::RealPath($SelectedFolder . $FileName));
-                        $Uploaded = true;
+                    if($validationState->isValid()){
+                        move_uploaded_file($_FILES['file']['tmp_name'],\Pvik\Core\Path::realPath($selectedFolder . $fileName));
+                        $uploaded = true;
                     }
                     
                 }
                 else {
-                    $ValidationState->SetError('File', 'error uploading');
+                    $validationState->setError('File', 'error uploading');
                 }
             }
-            $this->ViewData->Set('ValidationState', $ValidationState);
-            $this->ViewData->Set('Uploaded', $Uploaded);
-            $this->ExecuteView();
+            $this->viewData->set('ValidationState', $validationState);
+            $this->viewData->set('Uploaded', $uploaded);
+            $this->executeView();
         }
     }
 }

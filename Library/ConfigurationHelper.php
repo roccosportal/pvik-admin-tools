@@ -8,69 +8,70 @@ class ConfigurationHelper {
      * Contains the configuration for the tables.
      * @var array 
      */
-    protected $Tables;
+    protected $tables;
     /**
      * Contains the configuration for the current set up table.
      * @var array 
      */
-    protected $CurrentTable;
+    protected $currentTable;
     
     /**
      * 
      */
     public function __construct(){
-        $this->Tables = \Pvik\Core\Config::$Config['PvikAdminTools']['Tables'];
+        $this->tables = \Pvik\Core\Config::$config['PvikAdminTools']['Tables'];
+       
         // set current table to first table
-        foreach($this->Tables as $TableName => $Configuration){
-            $this->SetCurrentTable($TableName);
+        foreach($this->tables as $tableName => $configuration){
+            $this->setCurrentTable($tableName);
             break;
         }
     }
     
     /**
      * Sets the current used table.
-     * @param string $TableName 
+     * @param string $tableName 
      */
-    public function SetCurrentTable($TableName){
-        if($this->TableExists($TableName)){
-            $this->CurrentTable = $this->Tables[$TableName];
+    public function setCurrentTable($tableName){
+        if($this->tableExists($tableName)){
+            $this->currentTable = $this->tables[$tableName];
         }
         else {
-            throw new \Exception('PvikAdminTools: table ' . $TableName  . ' does not exists in configuration');
+            throw new \Exception('PvikAdminTools: table ' . $tableName  . ' does not exists in configuration');
         }
     }
     /**
      * Checks if a table exists in the configuration.
-     * @param string $TableName
+     * @param string $tableName
      * @return bool 
      */
-    public function TableExists($TableName){
-        return isset($this->Tables[$TableName]);
+    public function tableExists($tableName){
+        return isset($this->tables[$tableName]);
     }
     
     /**
      * Returns the configuration for all tables.
      * @return type 
      */
-    public function GetTables(){
-        return $this->Tables;
+    public function getTables(){
+        return $this->tables;
     }
     
     /**
      * Returns the configuration for currently used table.
      * @return array 
      */
-    public function GetCurrentTable(){
-        return $this->CurrentTable;
+    public function getCurrentTable(){
+        return $this->currentTable;
     }
     
     /**
      * Checks if a field exists in the currently used table.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return bool 
      */
-    public function FieldExists($FieldName){
-        if(isset($this->CurrentTable['Fields'][$FieldName])){
+    public function fieldExists($fieldName){
+        if(isset($this->currentTable['Fields'][$fieldName])){
             return true;
         }
         return false;
@@ -78,50 +79,50 @@ class ConfigurationHelper {
     
     /**
      * Checks if a field is nullable in the currently used table.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return bool 
      */
-    public function IsNullable($FieldName){
-        $Field = $this->GetField($FieldName);
-        if(isset($Field['Nullable'])){
-            return $Field['Nullable'];
+    public function isNullable($fieldName){
+        $field = $this->getField($fieldName);
+        if(isset($field['Nullable'])){
+            return $field['Nullable'];
         }
         return false;
     }
     
     /**
      * Returns the configuration for a field in the currently used table.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return array 
      */
-     public function GetField($FieldName){
-        if($this->FieldExists($FieldName)){
-            return $this->CurrentTable['Fields'][$FieldName];
+     public function getField($fieldName){
+        if($this->fieldExists($fieldName)){
+            return $this->currentTable['Fields'][$fieldName];
         }
         return null;
     }
     
     /**
      * Returns the type for a field in the currently used table.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return string 
      */
-    public function GetFieldType($FieldName){
-        $Field = $this->GetField($FieldName);
-        if($Field!=null&&isset($Field['Type'])){
-            return $Field['Type'];
+    public function getFieldType($fieldName){
+        $field = $this->getField($fieldName);
+        if($field!=null&&isset($field['Type'])){
+            return $field['Type'];
         }
         return null;
     }
     
     /**
      * Checks if a field is from type "Ignore" in the currently used table.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return bool 
      */
-    public function IsTypeIgnore($FieldName){
-        $FieldType = $this->GetFieldType($FieldName);
-        if($FieldType=='Ignore'){
+    public function isTypeIgnore($fieldName){
+        $fieldType = $this->getFieldType($fieldName);
+        if($fieldType=='Ignore'){
             return true;
         }
         return false;
@@ -129,37 +130,37 @@ class ConfigurationHelper {
     
     /**
      * Returns the field value for 'ShowInOverview' or false.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return bool 
      */
-    public function ShowInOverview($FieldName){
-        if($this->HasValueField($FieldName, 'ShowInOverview')){
-            return $this->GetValue($FieldName, 'ShowInOverview');
+    public function showInOverview($fieldName){
+        if($this->hasValueField($fieldName, 'ShowInOverview')){
+            return $this->getValue($fieldName, 'ShowInOverview');
         }
         return false;
     }
     
     /**
      * Returns the field value for 'Disabled' or false.
-     * @param string $FieldName
+     * @param string $fieldName
      * @return bool 
      */
-    public function IsDisabled($FieldName){
-        if($this->HasValueField($FieldName, 'Disabled')){
-            return $this->GetValue($FieldName, 'Disabled');
+    public function isDisabled($fieldName){
+        if($this->hasValueField($fieldName, 'Disabled')){
+            return $this->getValue($fieldName, 'Disabled');
         }
         return false;
     }
     
     /**
      * Checks if a field is set up for a field configuration
-     * @param string $FieldName
-     * @param string $ValueField
+     * @param string $fieldName
+     * @param string $valueField
      * @return bool 
      */
-    public function HasValueField($FieldName, $ValueField){
-        $Field = $this->GetField($FieldName);
-        if($Field!=null&&isset($Field[$ValueField])){
+    public function hasValueField($fieldName, $valueField){
+        $field = $this->getField($fieldName);
+        if($field!=null&&isset($field[$valueField])){
             return true;
         }
         return false;
@@ -168,32 +169,32 @@ class ConfigurationHelper {
     
     /**
      * Sets the value of a field configuration field.
-     * @param string $FieldName
-     * @param string $ValueField
+     * @param string $fieldName
+     * @param string $valueField
      * @return mixed 
      */
-    public function SetValue($FieldName, $ValueField, $Value){
-        if($this->FieldExists($FieldName)){
-            $this->CurrentTable['Fields'][$FieldName][$ValueField] = $Value;
+    public function setValue($fieldName, $valueField, $value){
+        if($this->fieldExists($fieldName)){
+            $this->currentTable['Fields'][$fieldName][$valueField] = $value;
             
         }
         else {
-            throw new \Exception('PvikAdminTools: ' . $FieldName .' does not exists');
+            throw new \Exception('PvikAdminTools: ' . $fieldName .' does not exists');
         } 
     }
     
     
     /**
      * Returns the value of a field configuration field.
-     * @param string $FieldName
-     * @param string $ValueField
+     * @param string $fieldName
+     * @param string $valueField
      * @return mixed 
      */
-    public function GetValue($FieldName, $ValueField){
+    public function getValue($fieldName, $valueField){
         
-        if($this->HasValueField($FieldName, $ValueField)){
-            $Field = $this->GetField($FieldName);
-            return $Field[$ValueField];
+        if($this->hasValueField($fieldName, $valueField)){
+            $field = $this->getField($fieldName);
+            return $field[$valueField];
         }
         else {
             return null;
@@ -205,20 +206,20 @@ class ConfigurationHelper {
      * Returns a list of field in the currently used table.
      * @return ArrayObject 
      */
-    public function GetFieldList(){
-        $FieldList = new \ArrayObject();
-        foreach($this->CurrentTable['Fields'] as $FieldName => $Definition){
-            $FieldList->append($FieldName);
+    public function getFieldList(){
+        $fieldList = new \ArrayObject();
+        foreach($this->currentTable['Fields'] as $fieldName => $definition){
+            $fieldList->append($fieldName);
         }
-        return $FieldList;
+        return $fieldList;
     }
     
     /**
      * Checks if currently used table has foreign tables.
      * @return bool 
      */
-    public function HasForeignTables(){
-        if(isset($this->CurrentTable['ForeignTables'])){
+    public function hasForeignTables(){
+        if(isset($this->currentTable['ForeignTables'])){
             return true;
         }
         return false;
@@ -228,9 +229,9 @@ class ConfigurationHelper {
      * Returns the configuration for foreign tables for the currently used table.
      * @return array 
      */
-    public function GetForeignTables(){
-        if($this->HasForeignTables()){
-            return $this->CurrentTable['ForeignTables'];
+    public function getForeignTables(){
+        if($this->hasForeignTables()){
+            return $this->currentTable['ForeignTables'];
         }
         return null;
     }

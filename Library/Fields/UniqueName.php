@@ -8,75 +8,75 @@ class UniqueName extends Base{
      * Returns the html for the field.
      * @return type 
      */
-    protected function AddHtmlSingleControl(){
+    protected function addHtmlSingleControl(){
        
        
-        $Disabled = 'disabled="disabled"';
+        $disabled = 'disabled="disabled"';
         
-        $this->Html .= '<input class="span8" name="'. $this->GetLowerFieldName() .'" type="text" value="'. $this->GetPresetValue() .'" ' . $Disabled . ' />';
+        $this->html .= '<input class="span8" name="'. $this->getLowerFieldName() .'" type="text" value="'. $this->getPresetValue() .'" ' . $disabled . ' />';
     }
     
     /**
      * Returns the  html for the overview.
      * @return type 
      */
-    public function HtmlOverview() {
-        $this->Html = '';
-        $FieldName = $this->FieldName;
-        return $this->Entity->$FieldName;
+    public function htmlOverview() {
+        $this->html = '';
+        $fieldName = $this->fieldName;
+        return $this->entity->$fieldName;
     }
     
     /**
      * Checks if the field value is valid.
      * @return ValidationState. 
      */
-    public function Validation() {
+    public function validation() {
         // ignore 
-        return $this->ValidationState;
+        return $this->validationState;
     }
     
-    public function Update(){
-        $Field = $this->ConfigurationHelper->GetField($this->FieldName);
+    public function update(){
+        $field = $this->configurationHelper->getField($this->fieldName);
         // wrong 'UseField' configuration
-        if(!isset($Field['UseField'])||!$this->FieldDefinitionHelper->FieldExists($Field['UseField'])){
-            throw new \Exception('PvikAdminTools: UseField for '. $FieldName . ' is not set up correctly. UseField is missing or it the stated field does not exists.');
+        if(!isset($field['UseField'])||!$this->fieldDefinitionHelper->fieldExists($field['UseField'])){
+            throw new \Exception('PvikAdminTools: UseField for '. $fieldName . ' is not set up correctly. UseField is missing or it the stated field does not exists.');
         }
-        $UseField = $Field['UseField'];
-        $FieldName = $this->FieldName;
-        $this->Entity->$FieldName = $this->CreateUniqueName( $UseField);
+        $useField = $field['UseField'];
+        $fieldName = $this->fieldName;
+        $this->entity->$fieldName = $this->createUniqueName( $useField);
     }
     
-    protected function CreateUniqueName($UseField){
-        $Name = $this->GetPOST($UseField);
-        $IsValid = false;
-        $UrlSafeName = \PvikAdminTools\Library\Help::MakeUrlSafe($Name);
-        $UniqueName = $UrlSafeName;
-        if($this->CheckIfUniqueName($UniqueName,  $UseField)){
-            $IsValid = true;;
+    protected function createUniqueName($useField){
+        $name = $this->getPOST($useField);
+        $isValid = false;
+        $urlSafeName = \PvikAdminTools\Library\Help::makeUrlSafe($name);
+        $uniqueName = $urlSafeName;
+        if($this->checkIfUniqueName($uniqueName,  $useField)){
+            $isValid = true;;
         }
         // add numbers till name is unique
         $i = 1;
-        while(!$IsValid){
-           $UniqueName = $UrlSafeName . '-' . $i;
-           if($this->CheckIfUniqueName($UniqueName, $UseField)){
-            $IsValid = true;;
+        while(!$isValid){
+           $uniqueName = $urlSafeName . '-' . $i;
+           if($this->checkIfUniqueName($uniqueName, $useField)){
+            $isValid = true;;
            }
            $i++;
          }
-        return $UniqueName;
+        return $uniqueName;
     }
     
-    protected function CheckIfUniqueName($Name, $UseField){
-        $PrimaryKey = $this->Entity->GetPrimaryKey();
-        $EntityArray = $this->Entity->GetModelTable()->LoadAll()
-            ->FilterEquals($UseField, $Name);
+    protected function checkIfUniqueName($name, $useField){
+        $primaryKey = $this->entity->getPrimaryKey();
+        $entityArray = $this->entity->getModelTable()->loadAll()
+            ->filterEquals($useField, $name);
 
-        if($PrimaryKey!=null&&$PrimaryKey!=''){         
-            $EntityArray = $EntityArray->FilterNotEquals($this->Entity->GetModelTable()->GetPrimaryKeyName(), $PrimaryKey);
+        if($primaryKey!=null&&$primaryKey!=''){         
+            $entityArray = $entityArray->filterNotEquals($this->entity->getModelTable()->getPrimaryKeyName(), $primaryKey);
         }
             
         // if query return an empty object, than no other entry has this name
-        if($EntityArray->IsEmpty()){
+        if($entityArray->isEmpty()){
             return true;
         }
         else {

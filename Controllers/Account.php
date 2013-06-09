@@ -7,31 +7,31 @@ class Account extends Base {
     /**
      * The logic for login.
      */
-    public function LoginAction(){
+    public function loginAction(){
         // checks if already logged in or login data send
         // turn off auto redirect
-        if($this->CheckPermission(false)){
+        if($this->checkPermission(false)){
             // if already logged in redirect to admin root
-            $this->RedirectToPath('~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url']);
+            $this->redirectToPath('~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url']);
         }
-        elseif($this->Request->IsPOST('login')&&$this->Request->IsPOST('username')&&$this->Request->IsPOST('password')){
+        elseif($this->request->isPOST('login')&&$this->request->isPOST('username')&&$this->request->isPOST('password')){
             // log in data sended but were wrong
-             $this->ViewData->Set('Username',$this->Request->GetPOST('username'));
-             $this->ViewData->Set('Error', true);
-             $this->ExecuteView();
+             $this->viewData->set('Username',$this->request->getPOST('username'));
+             $this->viewData->set('Error', true);
+             $this->executeView();
         }
         else {
             // show view to log in
-             $this->ExecuteView();
+             $this->executeView();
         }
     }
     /**
      * The logic for logout.
      */
-    public function LogoutAction(){
-        $this->Request->SessionStart();
+    public function logoutAction(){
+        $this->request->sessionStart();
         unset($_SESSION['AdminPvikToolsLoggedIn']);
         // redirect
-        $this->RedirectToPath('~/');
+        $this->redirectToPath('~/');
     }
 }

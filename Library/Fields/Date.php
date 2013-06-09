@@ -5,42 +5,42 @@ namespace PvikAdminTools\Library\Fields;
  */
 class Date extends Base{
    
-     protected function AddHtmlSingleControl(){
-        $Disabled = '';
-        if($this->ConfigurationHelper->FieldExists($this->FieldName)
-                && $this->ConfigurationHelper->IsDisabled($this->FieldName)){
-            $Disabled = 'disabled="disabled"';
+     protected function addHtmlSingleControl(){
+        $disabled = '';
+        if($this->configurationHelper->fieldExists($this->fieldName)
+                && $this->configurationHelper->isDisabled($this->fieldName)){
+            $disabled = 'disabled="disabled"';
         }
-        $this->Html .= '<input class="span8" name="'. $this->GetLowerFieldName() .'" type="text" value="' . $this->GetPresetValue().'" '. $Disabled .' />';
+        $this->html .= '<input class="span8" name="'. $this->getLowerFieldName() .'" type="text" value="' . $this->getPresetValue().'" '. $disabled .' />';
     }
     
     /**
      * Returns the html for the overview.
      * @return type 
      */
-    public function HtmlOverview() {
-        $this->Html = '';
-        $FieldName = $this->FieldName;
-        return  $this->Entity->$FieldName;
+    public function htmlOverview() {
+        $this->html = '';
+        $fieldName = $this->fieldName;
+        return  $this->entity->$fieldName;
     }
     
     /**
      * Validates if the field value is a date.
      * @return ValidationState 
      */
-    public function Validation() {
-        parent::Validation();
-        if($this->ValidationState->GetError($this->FieldName)==null && !$this->IsEnglishDate($this->GetPost($this->FieldName))){
-              $this->ValidationState->SetError($this->FieldName, 'Not a date.');
+    public function validation() {
+        parent::validation();
+        if($this->validationState->getError($this->fieldName)==null && !$this->isEnglishDate($this->getPost($this->fieldName))){
+              $this->validationState->setError($this->fieldName, 'Not a date.');
         }
-        return $this->ValidationState;
+        return $this->validationState;
     }
     
-    protected function IsEnglishDate($Date){
-        $DateArray = explode('-', $Date);
-        if(count($DateArray)==3){
-            if(is_numeric($DateArray[0])&&is_numeric($DateArray[1])&&is_numeric($DateArray[2])){
-                return checkdate($DateArray[1],$DateArray[2],$DateArray[1]);
+    protected function isEnglishDate($date){
+        $dateArray = explode('-', $date);
+        if(count($dateArray)==3){
+            if(is_numeric($dateArray[0])&&is_numeric($dateArray[1])&&is_numeric($dateArray[2])){
+                return checkdate($dateArray[1],$dateArray[2],$dateArray[1]);
             }
         }
         return false;
@@ -50,16 +50,16 @@ class Date extends Base{
      * Returns the preset type for the date field.
      * @return string 
      */
-    protected function GetPresetValue(){
-        $FieldName = $this->FieldName;
-        if($this->IsPOST($FieldName)){
-            return $this->GetPOST();
+    protected function getPresetValue(){
+        $fieldName = $this->fieldName;
+        if($this->isPOST($fieldName)){
+            return $this->getPOST();
         }
-        elseif(!$this->IsNewEntity()){
-            return $this->Entity->$FieldName;
+        elseif(!$this->isNewEntity()){
+            return $this->entity->$fieldName;
         }
-        elseif($this->ConfigurationHelper->HasValueField($FieldName, 'Preset')){
-            return $this->ConfigurationHelper->GetValue($FieldName, 'Preset');
+        elseif($this->configurationHelper->hasValueField($fieldName, 'Preset')){
+            return $this->configurationHelper->getValue($fieldName, 'Preset');
         }
         else {
             return date('Y-m-d');

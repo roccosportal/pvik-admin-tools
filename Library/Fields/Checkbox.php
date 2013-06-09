@@ -6,13 +6,13 @@ namespace PvikAdminTools\Library\Fields;
 class Checkbox extends Base {
     
 
-   protected function AddHtmlSingleControl(){
-        $Disabled = '';
-        if($this->ConfigurationHelper->FieldExists($this->FieldName)
-                && $this->ConfigurationHelper->IsDisabled($this->FieldName)){
-            $Disabled = 'disabled="disabled"';
+   protected function addHtmlSingleControl(){
+        $disabled = '';
+        if($this->configurationHelper->fieldExists($this->fieldName)
+                && $this->configurationHelper->isDisabled($this->fieldName)){
+            $disabled = 'disabled="disabled"';
         }
-        $this->Html .= '<input class="span8" name="'. $this->GetLowerFieldName() .'" type="checkbox" '. $this->GetPresetValue() .' value="checked" '. $Disabled .' />';
+        $this->html .= '<input class="span8" name="'. $this->getLowerFieldName() .'" type="checkbox" '. $this->getPresetValue() .' value="checked" '. $disabled .' />';
     }
     
     
@@ -20,26 +20,26 @@ class Checkbox extends Base {
      * Returns the preset value for the checkbox
      * @return string 
      */
-    public function GetPresetValue() {
-        $FieldName = $this->FieldName;
-        if($this->IsPOST($FieldName)){
-            if($this->GetPOST()=='checked'){
+    public function getPresetValue() {
+        $fieldName = $this->fieldName;
+        if($this->isPOST($fieldName)){
+            if($this->getPOST()=='checked'){
                return 'checked="checked"';
             }
             else {
                 return '';
             }
         }
-        elseif(!$this->IsNewEntity()){
-            if($this->Entity->$FieldName){
+        elseif(!$this->isNewEntity()){
+            if($this->entity->$fieldName){
                 return 'checked="checked"';
             }
             else {
                 return '';
             }
         }
-        elseif($this->ConfigurationHelper->HasValueField($FieldName, 'Preset') &&
-            $this->ConfigurationHelper->GetValue($FieldName, 'Preset')=='checked'){
+        elseif($this->configurationHelper->hasValueField($fieldName, 'Preset') &&
+            $this->configurationHelper->getValue($fieldName, 'Preset')=='checked'){
             return 'checked="checked"';
         }
         else {
@@ -51,37 +51,37 @@ class Checkbox extends Base {
      * Validates the checkbox.
      * @return ValidationState 
      */
-    public function Validation() {
+    public function validation() {
         // ignore validation
-        return $this->ValidationState;
+        return $this->validationState;
     }
     
     /**
      * Returns the html for the overview.
      * @return string 
      */
-    public function HtmlOverview() {
-        $FieldName = $this->FieldName;
-        $this->Html = '';
-        $Checked = '';
-        if($this->Entity->$FieldName){
-           $Checked = 'checked="checked"';
+    public function htmlOverview() {
+        $fieldName = $this->fieldName;
+        $this->html = '';
+        $checked = '';
+        if($this->entity->$fieldName){
+           $checked = 'checked="checked"';
         }
-        $this->Html .= '<input class="input-field" type="checkbox" '. $Checked .' disabled="disabled" />';
-        return  $this->Html;
+        $this->html .= '<input class="input-field" type="checkbox" '. $checked .' disabled="disabled" />';
+        return  $this->html;
     }
     
     /**
      * Updates the model.
      */
-    public function Update(){
-        $FieldName = $this->FieldName;
-        $Value = $this->GetPost();
-        if($Value == 'checked'){
-            $this->Entity->$FieldName = true;
+    public function update(){
+        $fieldName = $this->fieldName;
+        $value = $this->getPost();
+        if($value == 'checked'){
+            $this->entity->$fieldName = true;
         }
         else {
-            $this->Entity->$FieldName = false;
+            $this->entity->$fieldName = false;
         }
     }
 }

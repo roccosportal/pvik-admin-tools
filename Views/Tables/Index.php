@@ -1,22 +1,22 @@
 <?php
-$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] .'Views/MasterPages/Master.php');
+$this->useMasterPage(\Pvik\Core\Config::$config['PvikAdminTools']['BasePath'] .'Views/MasterPages/Master.php');
 // set data for the masterpage
-$this->ViewData->Set('Title', 'tables');
+$this->viewData->set('Title', 'tables');
 ?>
-<?php $this->StartContent('Head'); ?>
-<?php $this->EndContent(); ?>
-<?php $this->StartContent('Content'); ?>
+<?php $this->startContent('Head'); ?>
+<?php $this->endContent(); ?>
+<?php $this->startContent('Content'); ?>
 <div id="tables">
         <h2>tables</h2>
         <ul>
             <?php 
-            foreach(\Pvik\Core\Config::$Config['PvikAdminTools']['Tables'] as $TableName => $Table){ 
+            foreach(\Pvik\Core\Config::$config['PvikAdminTools']['Tables'] as $tableName => $table){ 
             ?>
             <li>
-                <span class="option-name"><?php $this->Helper->Link('~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/' .strtolower($TableName) . ':list/', $TableName); ?>
+                <span class="option-name"><?php $this->helper->link('~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/' .strtolower($tableName) . ':list/', $tableName); ?>
                 </span>
                 <span class="option-links">
-                    [<?php $this->Helper->Link('~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/' .strtolower($TableName) . ':list/', 'list'); ?>|<?php  $this->Helper->Link('~' . \Pvik\Core\Config::$Config['PvikAdminTools']['Url'] . 'tables/' .strtolower($TableName) . ':new/', 'new'); ?>]
+                    [<?php $this->helper->link('~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/' .strtolower($tableName) . ':list/', 'list'); ?>|<?php  $this->helper->link('~' . \Pvik\Core\Config::$config['PvikAdminTools']['Url'] . 'tables/' .strtolower($tableName) . ':new/', 'new'); ?>]
                 </span>
             </li>
             <?php
@@ -24,4 +24,4 @@ $this->ViewData->Set('Title', 'tables');
             ?>
         </ul>
 </div>
-<?php $this->EndContent(); ?>
+<?php $this->endContent(); ?>

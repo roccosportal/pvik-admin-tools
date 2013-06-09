@@ -1,9 +1,9 @@
 <?php
 namespace PvikAdminTools\Library\Fields;
 use \PvikAdminTools\Library\ConfigurationHelper;
-use \Pvik\Database\Generic\FieldDefinitionHelper;
-use \Pvik\Database\Generic\ModelTable;
-use \Pvik\Database\Generic\Entity;
+use \Pvik\Database\ORM\FieldDefinition\Helper as FieldDefinitionHelper;
+use \Pvik\Database\ORM\ModelTable;
+use \Pvik\Database\ORM\Entity;
 use \Pvik\Utils\ValidationState;
 use \Pvik\Web\Request;
 /**
@@ -12,133 +12,133 @@ use \Pvik\Web\Request;
 abstract class Base {
     /**
      * The current entity
-     * @var \Pvik\Database\Generic\Entity
+     * @var \Pvik\Database\ORM\Entity
      */
-    protected $Entity;
+    protected $entity;
     /**
      * Indicates if the entity is a new entity.
      * @var bool 
      */
-    protected $IsNewEntity;
+    protected $isNewEntity;
     /**
      * Contains the html output.
      * @var type 
      */
-    protected $Html;
+    protected $html;
     /**
      * Contains the helper class for the configuration.
      * @var ConfigurationHelper 
      */
-    protected $ConfigurationHelper;
+    protected $configurationHelper;
     /**
      * Contains the helper class for the model table field definition.
      * @var FieldDefinitionHelper
      */
-    protected $FieldDefinitionHelper;
+    protected $fieldDefinitionHelper;
     /**
      * Contains the name of the field.
      * @var string 
      */
-    protected $FieldName;
+    protected $fieldName;
     /**
      * Contains the validation state of the current entry.
      * @var ValidationState
      */
-    protected $ValidationState;
+    protected $validationState;
     /**
      * Contains the model table of the current entry.
      * @var ModelTable 
      */
-    protected $ModelTable;
+    protected $modelTable;
     
     /**
      * Contains a preset value for the field.
      * @var string 
      */
-    protected $Preset;
+    protected $preset;
     
     /**
      * 
      * @var Request 
      */
-    protected $Request;
+    protected $request;
     
     /**
      *
-     * @param string $FieldName
-     * @param Entity $Entity
-     * @param ValidationState $ValidationState 
+     * @param string $fieldName
+     * @param Entity $entity
+     * @param ValidationState $validationState 
      */
-    public function __construct($FieldName, Entity $Entity, Request $Request, ValidationState $ValidationState){
-        $this->FieldName = $FieldName;
-        $this->Entity = $Entity;
-        $this->ModelTable = $this->Entity->GetModelTable();
-        $this->Request = $Request;
-        $this->FieldDefinitionHelper = $this->ModelTable->GetFieldDefinitionHelper();
-        $this->ConfigurationHelper = new \PvikAdminTools\Library\ConfigurationHelper();
-        $this->ConfigurationHelper->SetCurrentTable($this->ModelTable->GetTableName());
-        $this->ValidationState = $ValidationState;
-        if($this->Entity->GetPrimaryKey()==null||$this->Entity->GetPrimaryKey()==''){
-            $this->IsNewEntity = true;
+    public function __construct($fieldName, Entity $entity, Request $request, ValidationState $validationState){
+        $this->fieldName = $fieldName;
+        $this->entity = $entity;
+        $this->modelTable = $this->entity->getModelTable();
+        $this->request = $request;
+        $this->fieldDefinitionHelper = $this->modelTable->getFieldDefinitionHelper();
+        $this->configurationHelper = new \PvikAdminTools\Library\ConfigurationHelper();
+        $this->configurationHelper->setCurrentTable($this->modelTable->getModelTableName());
+        $this->validationState = $validationState;
+        if($this->entity->getPrimaryKey()==null||$this->entity->getPrimaryKey()==''){
+            $this->isNewEntity = true;
         }
         else {
-            $this->IsNewEntity = false;
+            $this->isNewEntity = false;
         }
-        $this->Preset = '';
+        $this->preset = '';
     }
     
     /**
      * Sets the preset value of the current field.
-     * @param string $Preset 
+     * @param string $preset 
      */
-    public function SetPreset($Preset){
-        $this->Preset = $Preset;
+    public function setPreset($preset){
+        $this->preset = $preset;
     }
     
     /**
      * Checks if the model is a new model.
      * @return bool 
      */
-    protected function IsNewEntity(){
-        return $this->IsNewEntity;
+    protected function isNewEntity(){
+        return $this->isNewEntity;
     }
     
     /**
      * Returns the $_POST value of the current field if no field name given.
-     * @param string $FieldName [optional]
+     * @param string $fieldName [optional]
      * @return string 
      */
-    protected function GetPOST($FieldName = ''){
-        if($FieldName==''){
-            $FieldName = $this->FieldName;
+    protected function getPOST($fieldName = ''){
+        if($fieldName==''){
+            $fieldName = $this->fieldName;
         }
-        return $this->Request->GetPOST(strtolower($FieldName));
+        return $this->request->getPOST(strtolower($fieldName));
     }
 
-    protected function IsPOST($FieldName = ''){
-        if($FieldName==''){
-            $FieldName = $this->FieldName;
+    protected function isPOST($fieldName = ''){
+        if($fieldName==''){
+            $fieldName = $this->fieldName;
         }
-        return $this->Request->IsPOST(strtolower($FieldName));
+        return $this->request->isPOST(strtolower($fieldName));
     }
 
     /**
      * Returns the preset value of the current field.
      * @return string 
      */
-    protected function GetPresetValue(){
-        $FieldName = $this->FieldName;
-        if($this->IsPOST($FieldName)){
-            return $this->GetPOST();
+    protected function getPresetValue(){
+        $fieldName = $this->fieldName;
+        if($this->isPOST($fieldName)){
+            return $this->getPOST();
         }
-        elseif(!$this->IsNewEntity()){
-            return $this->Entity->$FieldName;
+        elseif(!$this->isNewEntity()){
+            return $this->entity->$fieldName;
         }
-        elseif($this->Preset!=''){
-            return $this->Preset;
+        elseif($this->preset!=''){
+            return $this->preset;
         }
-        elseif($this->ConfigurationHelper->HasValueField($FieldName, 'Preset')){
-            return $this->ConfigurationHelper->GetValue($FieldName, 'Preset');
+        elseif($this->configurationHelper->hasValueField($fieldName, 'Preset')){
+            return $this->configurationHelper->getValue($fieldName, 'Preset');
         }
         else {
             return '';
@@ -149,17 +149,17 @@ abstract class Base {
      * Returns a lowered name of the current field name.
      * @return string 
      */
-    protected function GetLowerFieldName(){
-        return strtolower($this->FieldName);
+    protected function getLowerFieldName(){
+        return strtolower($this->fieldName);
     }
     
     /**
      * Checks if this field is visible in single edit/new mode.
      * @return bool 
      */
-    public function IsVisibleSingle(){
-        if($this->ConfigurationHelper->FieldExists($this->FieldName) 
-                && $this->ConfigurationHelper->IsTypeIgnore($this->FieldName)){
+    public function isVisibleSingle(){
+        if($this->configurationHelper->fieldExists($this->fieldName) 
+                && $this->configurationHelper->isTypeIgnore($this->fieldName)){
             return false;
         }
         return true;
@@ -168,76 +168,76 @@ abstract class Base {
     /**
      * Adds a label to the html.
      */
-    protected function AddHtmlLabel(){
-        $this->Html .= '<label class="control-label" >' . $this->FieldName . '</label>';
+    protected function addHtmlLabel(){
+        $this->html .= '<label class="control-label" >' . $this->fieldName . '</label>';
     }
     
     /**
      * Validates the current field.
      * @return ValidationState 
      */
-    public function Validation(){
-      $Message = '';
-      if(!$this->ConfigurationHelper->IsDisabled($this->FieldName) &&  !$this->ConfigurationHelper->IsNullable($this->FieldName)&&($this->GetPOST($this->FieldName)===null||$this->GetPOST($this->FieldName)==="")){
-          $this->ValidationState->SetError($this->FieldName, 'Can not be empty.');
+    public function validation(){
+      $message = '';
+      if(!$this->configurationHelper->isDisabled($this->fieldName) &&  !$this->configurationHelper->isNullable($this->fieldName)&&($this->getPOST($this->fieldName)===null||$this->getPOST($this->fieldName)==="")){
+          $this->validationState->setError($this->fieldName, 'Can not be empty.');
       }
-      return $this->ValidationState;
+      return $this->validationState;
     }
     
     /**
      * Adds a validation field to the html.
      */
-    protected function AddHtmlValidationField(){
-        $Message = $this->ValidationState->GetError($this->FieldName);
-        if($Message!=''){
-            $this->Html .= '<span  class="help-inline">'. $Message .'</span>';
+    protected function addHtmlValidationField(){
+        $message = $this->validationState->getError($this->fieldName);
+        if($message!=''){
+            $this->html .= '<span  class="help-inline">'. $message .'</span>';
         }
     }
     
     /**
      * Adds a single field for the html in edit/update mode.
      */
-    public function HtmlSingle(){
-        $this->Html = '';
-        $this->Html .= '<div class="control-group ';
+    public function htmlSingle(){
+        $this->html = '';
+        $this->html .= '<div class="control-group ';
         
-        $Message = $this->ValidationState->GetError($this->FieldName);
-        if($Message!=''){
-            $this->Html .= 'error';
+        $message = $this->validationState->getError($this->fieldName);
+        if($message!=''){
+            $this->html .= 'error';
         }
-        $this->Html .= '">';
-        $this->AddHtmlLabel();
-        $this->Html .= '<div class="controls">';
-        $this->AddHtmlSingleControl();
-        $this->AddHtmlValidationField();
-        $this->Html .= '</div>';
-        $this->Html .= '</div>';
+        $this->html .= '">';
+        $this->addHtmlLabel();
+        $this->html .= '<div class="controls">';
+        $this->addHtmlSingleControl();
+        $this->addHtmlValidationField();
+        $this->html .= '</div>';
+        $this->html .= '</div>';
        
-        return $this->Html;
+        return $this->html;
     }
     /**
      * 
      */
-    protected abstract function AddHtmlSingleControl();
+    protected abstract function addHtmlSingleControl();
     
     /**
      * Adds a overview field for the htm in overview mode.
      */
-    public abstract function HtmlOverview();
+    public abstract function htmlOverview();
     
     /**
      * Updates a model field
      */
-    public function Update(){
-        $FieldName = $this->FieldName;
-        if($this->ConfigurationHelper->IsDisabled($this->FieldName)){
-            if(!$this->ConfigurationHelper->HasValueField($this->FieldName, 'Preset') && !$this->ConfigurationHelper->IsNullable($this->FieldName)){
-                throw new \Exception('PvikAdminTools: Field ' . $this->FieldName . ' is not nullable and is disabled but does not have a "Preset" value.');
+    public function update(){
+        $fieldName = $this->fieldName;
+        if($this->configurationHelper->isDisabled($this->fieldName)){
+            if(!$this->configurationHelper->hasValueField($this->fieldName, 'Preset') && !$this->configurationHelper->isNullable($this->fieldName)){
+                throw new \Exception('PvikAdminTools: Field ' . $this->fieldName . ' is not nullable and is disabled but does not have a "Preset" value.');
             }
-            $this->Entity->$FieldName = $this->ConfigurationHelper->GetValue($this->FieldName, 'Preset');
+            $this->entity->$fieldName = $this->configurationHelper->getValue($this->fieldName, 'Preset');
         }
         else {
-            $this->Entity->$FieldName = $this->GetPOST();
+            $this->entity->$fieldName = $this->getPOST();
         }
     }
 }

@@ -6,34 +6,34 @@ namespace PvikAdminTools\Library\Fields;
 class FileSize extends Normal{
    
     
-    protected function AddHtmlSingleControl(){
-        $Disabled = 'disabled="disabled"';
+    protected function addHtmlSingleControl(){
+        $disabled = 'disabled="disabled"';
       
-        $this->Html .= '<input class="span8" name="'. $this->GetLowerFieldName() .'" type="text" value="'. $this->GetPresetValue() .'" ' . $Disabled . ' />';    
+        $this->html .= '<input class="span8" name="'. $this->getLowerFieldName() .'" type="text" value="'. $this->getPresetValue() .'" ' . $disabled . ' />';    
     
     }
     /**
      * Validates the field value.
      * @return ValidationState 
      */
-    public function Validation() {
+    public function validation() {
         // ignore 
-        return $this->ValidationState;
+        return $this->validationState;
     }
     
     /**
      * Updates the model.
      */
-    public function Update(){
-        $FieldName = $this->FieldName;
-        $Field = $this->ConfigurationHelper->GetField($FieldName);
+    public function update(){
+        $fieldName = $this->fieldName;
+        $field = $this->configurationHelper->getField($fieldName);
         // wrong 'UseField' configuration
-        if(!isset($Field['UseField'])||!$this->FieldDefinitionHelper->FieldExists($Field['UseField'])){
-            throw new \Exception('PvikAdminTools: UseField for '. $FieldName . ' is not set up correctly. UseField is missing or it the stated field does not exists.');
+        if(!isset($field['UseField'])||!$this->fieldDefinitionHelper->fieldExists($field['UseField'])){
+            throw new \Exception('PvikAdminTools: UseField for '. $fieldName . ' is not set up correctly. UseField is missing or it the stated field does not exists.');
         }
-        $UseField = $Field['UseField'];
+        $useField = $field['UseField'];
         
-        $this->Model->$FieldName = filesize(\Pvik\Core\Path::RealPath($this->GetPOST($UseField)));
+        $this->model->$fieldName = filesize(\Pvik\Core\Path::realPath($this->getPOST($useField)));
     }
 }
 

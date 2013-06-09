@@ -1,16 +1,16 @@
 <?php
-$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] . 'Views/MasterPages/Master.php');
-$ValidationState = $this->ViewData->Get('ValidationState');
-$Uploaded = $this->ViewData->Get('Uploaded');
+$this->useMasterPage(\Pvik\Core\Config::$config['PvikAdminTools']['BasePath'] . 'Views/MasterPages/Master.php');
+$validationState = $this->viewData->get('ValidationState');
+$uploaded = $this->viewData->get('Uploaded');
 // set data for the masterpage
-$this->ViewData->Set('Title', 'upload file');
+$this->viewData->set('Title', 'upload file');
 ?>
-<?php $this->StartContent('Head'); ?>
-<?php $this->EndContent(); ?>
-<?php $this->StartContent('Content'); ?>
+<?php $this->startContent('Head'); ?>
+<?php $this->endContent(); ?>
+<?php $this->startContent('Content'); ?>
 <div id="files">
     <h2>upload file</h2>
-    <?php if ($Uploaded) { ?>
+    <?php if ($uploaded) { ?>
         <div class="form-message-success">
             file uploaded
         </div>
@@ -27,20 +27,20 @@ $this->ViewData->Set('Title', 'upload file');
             <div class="controls">
                 <select class="span8" name="folder">
                     <?php
-                    foreach (\Pvik\Core\Config::$Config['PvikAdminTools']['FileFolders'] as $Folder) {
+                    foreach (\Pvik\Core\Config::$config['PvikAdminTools']['FileFolders'] as $folder) {
                         ?>
-                        <option><?php echo $Folder ?></option>
+                        <option><?php echo $folder ?></option>
                         <?php
                     }
                     ?>
                 </select>
             </div>
         </div>
-        <div class="control-group <?php echo $ValidationState->GetError('File') != null ? 'error' : ''; ?>">
+        <div class="control-group <?php echo $validationState->getError('File') != null ? 'error' : ''; ?>">
             <label class="control-label">file</label>
             <div class="controls">
                 <input class="span8" type="file" name="file" />
-                <?php $this->Helper->Errorfield($ValidationState, 'File', 'help-inline'); ?>
+                <?php $this->helper->errorfield($validationState, 'File', 'help-inline'); ?>
             </div>
         </div>
         <div class="control-group">
@@ -51,4 +51,4 @@ $this->ViewData->Set('Title', 'upload file');
 
     </form>
 </div>
-<?php $this->EndContent(); ?>
+<?php $this->endContent(); ?>

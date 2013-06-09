@@ -6,31 +6,31 @@ namespace PvikAdminTools\Library;
 class Help {
     /**
      * Returns a url safe text.
-     * @param string $Text
+     * @param string $text
      * @return string 
      */
-    public static function MakeUrlSafe($Text){
-        $String = str_replace('-', '', $Text);
-        $String = str_replace(' ', '-', $String);
-        $String = str_replace(':', '', $String);
-        $String = str_replace('.', '', $String);
-        $String = str_replace(',', '', $String);
-        $String = str_replace('!', '', $String);
-        $String = str_replace('?', '', $String);
-        $String = str_replace("'", '', $String);
-        $String = str_replace("&", '', $String);
-         $String = str_replace('--', '-', $String);
-        $String = str_replace('--', '-', $String);
-        $String = strtolower($String);
-        return $String;
+    public static function makeUrlSafe($text){
+        $string = str_replace('-', '', $text);
+        $string = str_replace(' ', '-', $string);
+        $string = str_replace(':', '', $string);
+        $string = str_replace('.', '', $string);
+        $string = str_replace(',', '', $string);
+        $string = str_replace('!', '', $string);
+        $string = str_replace('?', '', $string);
+        $string = str_replace("'", '', $string);
+        $string = str_replace("&", '', $string);
+         $string = str_replace('--', '-', $string);
+        $string = str_replace('--', '-', $string);
+        $string = strtolower($string);
+        return $string;
     }
     
     /**
      * Returns a relative file path with the PvikAdminTools base path.
-     * @param string $Path
+     * @param string $path
      * @return string 
      */
-    public static function FileRelativePath($Path){
-        return \Pvik\Core\Path::RelativePath(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] . $Path);
+    public static function fileRelativePath($path){
+        return \Pvik\Core\Path::relativePath(\Pvik\Core\Config::$config['PvikAdminTools']['BasePath'] . $path);
     }
 }

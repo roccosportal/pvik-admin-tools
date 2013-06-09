@@ -7,21 +7,21 @@ namespace PvikAdminTools\Library\Fields;
  */
 class Password extends Base {
 
-    protected function AddHtmlSingleControl() {
-        $Disabled = '';
-        if ($this->ConfigurationHelper->FieldExists($this->FieldName)
-                && $this->ConfigurationHelper->IsDisabled($this->FieldName)) {
-            $Disabled = 'disabled="disabled"';
+    protected function addHtmlSingleControl() {
+        $disabled = '';
+        if ($this->configurationHelper->fieldExists($this->fieldName)
+                && $this->configurationHelper->isDisabled($this->fieldName)) {
+            $disabled = 'disabled="disabled"';
         }
-        $this->Html .= '<input class="span8" name="' . $this->GetLowerFieldName() . '" type="password" ' . $this->GetPresetValue() . ' ' . $Disabled . ' />';
+        $this->html .= '<input class="span8" name="' . $this->getLowerFieldName() . '" type="password" ' . $this->getPresetValue() . ' ' . $disabled . ' />';
     }
 
     /**
      * Returns the preset value for the checkbox
      * @return string 
      */
-    public function GetPresetValue() {
-        if($this->IsNewEntity()){
+    public function getPresetValue() {
+        if($this->isNewEntity()){
             return '';
         }
         return 'value="******"';
@@ -31,29 +31,29 @@ class Password extends Base {
      * Validates the checkbox.
      * @return ValidationState 
      */
-    public function Validation() {
+    public function validation() {
         // ignore validation
-        return $this->ValidationState;
+        return $this->validationState;
     }
 
     /**
      * Returns the html for the overview.
      * @return string 
      */
-    public function HtmlOverview() {
+    public function htmlOverview() {
         return '******';
     }
 
     /**
      * Updates the entity.
      */
-    public function Update() {
-        $FieldName = $this->FieldName;
-        $Value = $this->GetPost();
-        if ($Value != '******') {
-            $Random = md5(uniqid(mt_rand(), true));
-            $Salt = '$2a$07$' . $Random . '$';
-            $this->Entity->$FieldName = crypt($Value, $Salt);
+    public function update() {
+        $fieldName = $this->fieldName;
+        $value = $this->getPost();
+        if ($value != '******') {
+            $random = md5(uniqid(mt_rand(), true));
+            $salt = '$2a$07$' . $random . '$';
+            $this->entity->$fieldName = crypt($value, $salt);
         }
     }
 

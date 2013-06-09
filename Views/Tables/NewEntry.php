@@ -1,15 +1,15 @@
 <?php
-$this->UseMasterPage(\Pvik\Core\Config::$Config['PvikAdminTools']['BasePath'] .'Views/MasterPages/Master.php');
-$ModelTableName = $this->ViewData->Get('ModelTableName');
-$SingleHtml = $this->ViewData->Get('SingleHtml');
+$this->useMasterPage(\Pvik\Core\Config::$config['PvikAdminTools']['BasePath'] .'Views/MasterPages/Master.php');
+$modelTableName = $this->viewData->get('ModelTableName');
+$singleHtml = $this->viewData->get('SingleHtml');
 // set data for the masterpage
-$this->ViewData->Set('Title', 'new table entry: '. $ModelTableName);
+$this->viewData->set('Title', 'new table entry: '. $modelTableName);
 ?>
-<?php $this->StartContent('Head'); ?>
-<?php $this->EndContent(); ?>
-<?php $this->StartContent('Content'); ?>
+<?php $this->startContent('Head'); ?>
+<?php $this->endContent(); ?>
+<?php $this->startContent('Content'); ?>
 <div id="tables">
-        <h2>new table entry: <?php echo $ModelTableName;?></h2>
-        <?php echo $SingleHtml->ToHtml(); ?>
+        <h2>new table entry: <?php echo $modelTableName;?></h2>
+        <?php echo $singleHtml->toHtml(); ?>
 </div>
-<?php $this->EndContent(); ?>
+<?php $this->endContent(); ?>
